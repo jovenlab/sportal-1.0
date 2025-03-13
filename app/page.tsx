@@ -23,7 +23,7 @@ const Home = async ({searchParams}:HomeProps) => {
         )
     }
 
-// hello world
+// hello
     return (
         <ClientOnly>
             <Container>
