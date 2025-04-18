@@ -10,14 +10,15 @@ export default function TournamentPage({ params }: { params: { id: string } }) {
   const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
-    const fetchTournament = () => {
-      const tournament = mockTournaments.find(
-        (t) => t.id === parseInt(params.id)
-      );
-      setTournament(tournament || null);
-    };
-    fetchTournament();
-  }, [params.id]);
+    const url = window.location.pathname;
+    const idMatch = url.match(/\/tournaments\/(\d+)/);
+    const id = idMatch ? parseInt(idMatch[1]) : null;
+
+    if (!id) return;
+
+    const tournament = mockTournaments.find((t) => t.id === id);
+    setTournament(tournament || null);
+  }, []);
 
   const openModal = (match: Match) => {
     setSelectedMatch(match);
