@@ -72,6 +72,12 @@ export const categories = [
         icon: FaBaseballBall,
         description:'This Tournament is for Baseball'
     },
+    {
+        label: 'Others',
+        icon: FaBaseballBall,
+        description:'This Tournament is for Baseball'
+    },
+    
     
 
 ]
