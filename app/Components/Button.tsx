@@ -1,5 +1,4 @@
 'use client';
-
 import React from 'react'
 import {IconType} from "react-icons";
 interface ButtonProps{
@@ -9,6 +8,7 @@ interface ButtonProps{
     outline?:boolean;
     small?:boolean;
     icon?:IconType;
+    green?:boolean;
 }
 
 const Button: React.FC<ButtonProps> = ({
@@ -17,6 +17,7 @@ const Button: React.FC<ButtonProps> = ({
     disabled,
     outline,
     small,
+    green,
     icon:Icon
 }) => {
   return (
@@ -33,6 +34,8 @@ const Button: React.FC<ButtonProps> = ({
                 ${outline? 'bg-white': 'bg-sky-500'}
                 ${outline? 'border-black': 'border-sky-500'}
                 ${outline? 'text-black': 'text-white'}
+                ${green? 'bg-green-500' : ''}
+                ${green? 'border-green-500' : ''}
                 ${small? 'py-1': 'py-3'}
                 ${small? 'text-sm': 'text-md'}
                 ${small? 'font-light': 'font-semibold'}
