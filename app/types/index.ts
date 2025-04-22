@@ -49,4 +49,10 @@ export interface Participant {
     endDate: string;
     participants: Participant[];
     matches: Match[];
+    registrationFields: {
+        id: string | number;
+        label: string;
+        required: boolean;
+        type: string;
+      }[];
   }

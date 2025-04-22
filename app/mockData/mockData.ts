@@ -17,6 +17,12 @@ export const mockTournaments: Tournament[] = [
       { id: 1, team1: 'Team A', team2: 'Team B', date: '2023-11-01', winner: 'Team A' },
       { id: 2, team1: 'Team C', team2: 'Team A', date: '2023-11-02', winner: 'Team C' },
     ],
+    registrationFields: [
+      { id: 1, label: 'Full Name', type: 'string', required: true },
+      { id: 2, label: 'Age', type: 'integer', required: true },
+      { id: 3, label: 'Email', type: 'string', required: true },
+      { id: 4, label: 'Phone Number', type: 'string', required: false },
+    ],
   },
   {
     id: 2,
@@ -30,6 +36,12 @@ export const mockTournaments: Tournament[] = [
     ],
     matches: [
       { id: 3, team1: 'School X', team2: 'School Y', date: '2023-10-16', winner: 'School X' },
+    ],
+    registrationFields: [
+      { id: 1, label: 'Full Name', type: 'string', required: true },
+      { id: 2, label: 'Gender', type: 'string', required: true },
+      { id: 3, label: 'Date of Birth', type: 'date', required: true },
+      { id: 4, label: 'Team Name', type: 'string', required: true },
     ],
   },
   {
@@ -49,6 +61,12 @@ export const mockTournaments: Tournament[] = [
       { id: 2, team1: 'Charlie Brown', team2: 'Diana Prince', date: '2023-11-02', winner: 'Diana Prince' },
       { id: 3, team1: 'Alice Johnson', team2: 'Diana Prince', date: '2023-11-03', winner: undefined }, // Match not yet played
     ],
+    registrationFields: [
+      { id: 1, label: 'Full Name', type: 'string', required: true },
+      { id: 2, label: 'Gender', type: 'string', required: true },
+      { id: 3, label: 'Date of Birth', type: 'date', required: true },
+      { id: 4, label: 'Team Name', type: 'string', required: true },
+    ],
   },
   {
     id: 4,
@@ -66,6 +84,12 @@ export const mockTournaments: Tournament[] = [
       { id: 4, team1: 'Ethan Hunt', team2: 'Fiona Gallagher', date: '2023-10-16', winner: 'Ethan Hunt' },
       { id: 5, team1: 'Gus Fring', team2: 'Hannah Baker', date: '2023-10-17', winner: 'Hannah Baker' },
       { id: 6, team1: 'Ethan Hunt', team2: 'Hannah Baker', date: '2023-10-19', winner: undefined }, // Match not yet played
+    ],
+    registrationFields: [
+      { id: 1, label: 'Full Name', type: 'string', required: true },
+      { id: 2, label: 'Age', type: 'integer', required: true },
+      { id: 3, label: 'Email', type: 'string', required: true },
+      { id: 4, label: 'Phone Number', type: 'string', required: false },
     ],
   },
 ];
