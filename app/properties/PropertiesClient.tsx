@@ -2,14 +2,14 @@
 
 import { useRouter } from 'next/navigation';
 import axios from "axios";
-
 import Container from '../Components/Container';
 import Heading from '../Components/Heading';
 import React, { useCallback, useState } from 'react'
 import toast from 'react-hot-toast';
 import ListingCard from '../Components/listings/ListingCard';
-
 import {SafeUser, SafeListing } from '../types';
+
+import Button from '../Components/Button';
 
 interface PropertiesClientProps{
     listings: SafeListing[];
@@ -68,8 +68,10 @@ const PropertiesClient: React.FC<PropertiesClientProps> = ({
                 disabled={deletingId === listing.id}
                 actionLabel="Delete property"
                 currentUser={currentUser}
+                owned={true}
             />
         ))}
+
         </div>
     </Container>
   );

@@ -1,6 +1,5 @@
 'use client';
 import React, { useCallback, useMemo } from 'react'
-
 import {SafeListing,SafeUser,SafeReservations} from "@/app/types";
 import { useRouter } from 'next/navigation';
 import useCountries from '@/app/hooks/useCountries';
@@ -18,6 +17,7 @@ interface ListingCardProps{
     actionLabel?: string;
     actionId?: string;
     currentUser?: SafeUser | null;
+    owned?: boolean;
 }
 
 const ListingCard: React.FC<ListingCardProps> = ({
@@ -27,8 +27,10 @@ const ListingCard: React.FC<ListingCardProps> = ({
     disabled,
     actionLabel,
     actionId="",
-    currentUser
+    currentUser,
+    owned
 }) => {
+
     const router = useRouter();
     const {getByValue} = useCountries();
 
@@ -58,7 +60,8 @@ const ListingCard: React.FC<ListingCardProps> = ({
             const start = new Date(reservation.startDate);
             const end = new Date(reservation.endDate);
 
-            return `${format(start,'PP')} - ${format(end,'PP')}`
+            // return `${format(start,'PP')} - ${format(end,'PP')}`
+            return `${format(start,'PP')}`
         },[reservation]);
 
   return (
@@ -113,13 +116,26 @@ const ListingCard: React.FC<ListingCardProps> = ({
                     <div className='font-light'>entry</div>
                 )} */}
             </div>
-            {onAction && actionLabel && (
+            {onAction && actionLabel &&(
+            <>
+                {owned && (
+                    <Button
+                        disabled={disabled}
+                        small
+                        green
+                        label={"Begin Tournament"}
+                        onClick={handleCancel}
+                    />
+                )
+            }
                 <Button
-                    disabled={disabled}
-                    small
-                    label={actionLabel}
-                    onClick={handleCancel}
+                disabled={disabled}
+                small
+                // outline
+                label={actionLabel}
+                onClick={handleCancel}
                 />
+            </>
             )}
         </div>
     </div>
