@@ -58,7 +58,7 @@ model Listing{
   createdAt DateTime @default(now())
   category String
   guestCount Int
-  roomCount Int  
+  roomCount Int?  
   bathroomCount Int
   locationValue String
   userId String @db.ObjectId
