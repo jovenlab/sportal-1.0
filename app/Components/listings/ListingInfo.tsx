@@ -16,8 +16,8 @@ interface ListingInfoProps{
     user: SafeUser;
     description: string;
     guestCount: number;
-    roomCount: number;
-    bathroomCount: number;
+    // roomCount: number;
+    // bathroomCount: number;
     category: {
         icon: IconType;
         label: string;
@@ -31,8 +31,8 @@ const ListingInfo: React.FC<ListingInfoProps> = ({
     user,
     description,
     guestCount,
-    roomCount,
-    bathroomCount,
+    // roomCount,
+    // bathroomCount,
     category,
     locationValue,
     tournamentDate
