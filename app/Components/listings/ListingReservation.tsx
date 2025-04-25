@@ -53,6 +53,17 @@ const ListingReservation: React.FC<ListingReservationProps> = ({
                 label="Reserve a spot"
                 onClick={onSubmit}
             />
+
+            {/* BEGIN TOURNAMENT BUTTON */}
+            <div className='mt-2'>
+                <Button
+                label="Begin Tournament"
+                onClick={() => {
+                    console.log("Tournament started!");
+                    // You can add more logic here later
+                }}
+                />
+            </div>
         </div>
         {/* <div className='
                 p-4

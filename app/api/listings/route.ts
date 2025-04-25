@@ -33,6 +33,17 @@ export async function POST(
     //     }
     // });
 
+      // ✅ Validate tournamentDate
+    const isValidDate = (str: string) => !isNaN(Date.parse(str));
+    const isPastDate = (str: string) => new Date(str) < new Date(new Date().toDateString());
+
+    if (!isValidDate(tournamentDate) || isPastDate(tournamentDate)) {
+        return NextResponse.json(
+        { error: "Tournament date must be a valid future date." },
+        { status: 400 }
+        );
+    }
+
     const listing = await prisma.listing.create({
         data:{
             title,

@@ -74,7 +74,7 @@ const UserMenu: React.FC<UserMenuProps> = ({
                 '>
                     
                     <div className='hidden md:block'>
-                        <Avatar src={currentUser?.image}/>
+                        <Avatar src={currentUser?.image} size={30} />
                     </div>
                     <AiOutlineMenu/>
             </div>
@@ -96,11 +96,11 @@ const UserMenu: React.FC<UserMenuProps> = ({
                     {currentUser ? (
                             <>
                             <MenuItem
-                                onClick={()=>{}}
+                                onClick={() => router.push('/profile')}
                                 label="Profile"
                             />
                             <MenuItem
-                                onClick={rentModal.onOpen}
+                                onClick={onRent}
                                 label="Create Tournament"
                             />
                             <MenuItem

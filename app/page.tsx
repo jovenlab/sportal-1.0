@@ -5,6 +5,8 @@ import EmptyState from "./Components/EmptyState";
 import getListings,{IListingsParams} from "./actions/getListings";
 import ListingCard from "./Components/listings/ListingCard";
 import getCurrentUser from "./actions/getCurrentUser";
+import DarkModeToggle from "./Components/DarkModeToggle"
+
 
 interface HomeProps{
     searchParams: IListingsParams
@@ -19,6 +21,7 @@ const Home = async ({searchParams}:HomeProps) => {
         return (
             <ClientOnly>
                 <EmptyState showReset/>
+                <DarkModeToggle />
             </ClientOnly>
         )
     }
@@ -49,6 +52,7 @@ const Home = async ({searchParams}:HomeProps) => {
                     })}
                 </div>
             </Container>
+            <DarkModeToggle />
         </ClientOnly>
 
     )

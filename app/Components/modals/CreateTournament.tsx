@@ -250,13 +250,20 @@ const RentModal = () => {
                         value={Date} 
                         onChange={(date) => setCustomValue('Date', date)} /> */}
         <Input
-          id="tournamentDate"
-          label="Tournament Date (Ex. 02/08/2025)"
-          disabled={isLoading}
-          register={register}
-          errors={errors}
-          required
-        />
+           id="tournamentDate"
+           label="Tournament Date (Ex. 2025-04-27)"
+           type="date"
+           disabled={isLoading}
+           register={register("tournamentDate", {
+             required: "Tournament date is required",
+             validate: (value) => {
+               const today = new Date().toISOString().split("T")[0];
+               return value >= today || "Date must not be in the past";
+             }
+           })}
+           errors={errors}
+           required
+         />
         {/* <hr />
                 <Counter
                     title="Rooms"
@@ -366,7 +373,10 @@ const RentModal = () => {
           id="title"
           label="Title"
           disabled={isLoading}
-          register={register}
+          register={register("title", {
+            required: "Title is required",
+            minLength: { value: 3, message: "Must be at least 3 characters" }
+          })}
           errors={errors}
           required
         />
@@ -375,7 +385,10 @@ const RentModal = () => {
           id="description"
           label="Description"
           disabled={isLoading}
-          register={register}
+          register={register("description", {
+            required: "Description is required",
+            minLength: { value: 10, message: "Must be at least 10 characters" }
+          })}
           errors={errors}
           required
         />
@@ -391,15 +404,19 @@ const RentModal = () => {
           subtitle="How much does the entrance fee cost?"
         />
         <Input
-          id="price"
-          label="Price"
-          formatPrice
-          type="number"
-          disabled={isLoading}
-          register={register}
-          errors={errors}
-          required
-        />
+           id="price"
+           label="Price"
+           formatPrice
+           type="number"
+           disabled={isLoading}
+           register={register("price", {
+             required: "Price is required",
+             min: { value: 1, message: "Price must be at least 1" },
+             valueAsNumber: true,
+           })}
+           errors={errors}
+           required
+         />
       </div>
     );
   }
