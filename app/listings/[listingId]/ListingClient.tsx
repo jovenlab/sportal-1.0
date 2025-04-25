@@ -131,7 +131,11 @@ const ListingClient: React.FC<ListingClientProps> = ({
                         user={listing.user}
                         category={category}
                         description={listing.description}
+<<<<<<< HEAD
                         // roomCount={listing.roomCount}
+=======
+                        roomCount={listing.roomCount ?? 0}
+>>>>>>> 6c2952c85fc4ac62c8fc69fcda268cff830566c4
                         guestCount={listing.guestCount}
                         // bathroomCount={listing.bathroomCount}
                         locationValue={listing.locationValue}
