@@ -111,10 +111,11 @@ const Modal: React.FC<ModalProps> = ({
                             flex
                             flex-col
                             w-full
-                            bg-white
+                            bg-white dark:bg-neutral-900
+                            text-black dark:text-white
                             outline-none
                             focus:outline-none
-                        ">
+                            ">
                             {/* HEADER */}
                             <div className='
                                     flex
@@ -136,7 +137,7 @@ const Modal: React.FC<ModalProps> = ({
                                 '>
                                     <IoMdClose size={30}/>
                                 </button>
-                                <div className='text-lg font-semibold'>
+                                <div className='text-lg font-semibold text-black dark:text-white'>
                                     {title}
                                 </div>
 
