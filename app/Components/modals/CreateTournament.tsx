@@ -254,13 +254,7 @@ const RentModal = () => {
            label="Tournament Date (Ex. 2025-04-27)"
            type="date"
            disabled={isLoading}
-           register={register("tournamentDate", {
-             required: "Tournament date is required",
-             validate: (value) => {
-               const today = new Date().toISOString().split("T")[0];
-               return value >= today || "Date must not be in the past";
-             }
-           })}
+           register={register}
            errors={errors}
            required
          />
@@ -373,10 +367,7 @@ const RentModal = () => {
           id="title"
           label="Title"
           disabled={isLoading}
-          register={register("title", {
-            required: "Title is required",
-            minLength: { value: 3, message: "Must be at least 3 characters" }
-          })}
+          register={register}
           errors={errors}
           required
         />
@@ -385,10 +376,7 @@ const RentModal = () => {
           id="description"
           label="Description"
           disabled={isLoading}
-          register={register("description", {
-            required: "Description is required",
-            minLength: { value: 10, message: "Must be at least 10 characters" }
-          })}
+          register={register}
           errors={errors}
           required
         />
@@ -409,11 +397,7 @@ const RentModal = () => {
            formatPrice
            type="number"
            disabled={isLoading}
-           register={register("price", {
-             required: "Price is required",
-             min: { value: 1, message: "Price must be at least 1" },
-             valueAsNumber: true,
-           })}
+           register={register}
            errors={errors}
            required
          />
