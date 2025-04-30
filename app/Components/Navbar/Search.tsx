@@ -5,8 +5,10 @@ import { differenceInDays } from 'date-fns';
 import { useSearchParams } from 'next/navigation';
 import React, { useMemo } from 'react'
 import { BiSearch } from 'react-icons/bi';
+import {useRouter} from 'next/navigation';
 
 const Search = () => {
+  const router = useRouter();
   const searchModal = useSearchModal();
   const params = useSearchParams();
   const {getByValue} = useCountries();
@@ -55,7 +57,7 @@ const Search = () => {
       py-2
       rounded-full
       shadow-sm
-      hover:shadow-md
+      
       transition
       cursor-pointer
       '>
@@ -71,7 +73,10 @@ const Search = () => {
                 text-sm
                 font-semibold
                 px-6
-            '>
+                hover:underline
+                '
+              onClick={()=>router.push('/properties')}
+                >
                 {/* {locationLabel} */} My Tournaments
             </div>
                 <div
@@ -84,7 +89,10 @@ const Search = () => {
                         border-x-[1px]
                         flex-1
                         text-center
-                    '>
+                        hover:underline
+                    '
+                    onClick={()=>router.push('/reservations')}
+                    >
                         {/* {durationLabel} */} My Games
                 </div>
                 <div className='
@@ -98,7 +106,10 @@ const Search = () => {
                         items-center
                         gap-3
                 '>
-                    <div className='hidden sm:block text-sm font-semibold text-center px-6'>
+                    <div className='hidden sm:block text-sm font-semibold text-center px-6 hover:underline'
+                        onClick={()=>router.push('/favorites')}
+                    
+                    >
                       {/* {guestLabel} */} My Favorites
                     </div>
                     {/* <div className='hidden sm:block text-sm font-semibold text-center px-6 border-l-[1px]'>Tournaments</div> */}
