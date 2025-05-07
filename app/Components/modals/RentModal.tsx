@@ -55,7 +55,8 @@ const RentModal = () => {
             price: 1,
             title:'',
             description:'',
-            tournamentDate: null
+            tournamentDate: null,
+            localAddress: ''
         }
     });
 
@@ -91,7 +92,6 @@ const RentModal = () => {
         }
         setIsLoading(true);
 
-        
         const formattedData = {
             ...data,
             tournamentDate: new Date(data.tournamentDate).toISOString(),
@@ -175,7 +175,15 @@ const RentModal = () => {
 
                 <Map
                     center={location?.latlng}
-                />  
+                />
+                <Input
+                    id="localAddress"
+                    label="Local Address (e.g., field name, gym, street)"
+                    disabled={isLoading}
+                    register={register}
+                    errors={errors}
+                    required
+                />
 
             </div>
         )

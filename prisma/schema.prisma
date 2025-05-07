@@ -58,6 +58,7 @@ model Listing {
   category       String
   guestCount     Int
   locationValue  String
+  localAddress   String
   userId         String     @db.ObjectId
   price          Int
   tournamentDate DateTime   // updated type

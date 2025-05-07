@@ -23,6 +23,7 @@ interface ListingInfoProps{
         description: string;
     } | undefined
     locationValue: string;
+    localAddress: string;
     tournamentDate: Date;
 }
 
@@ -30,7 +31,7 @@ const ListingInfo: React.FC<ListingInfoProps> = ({
     user,
     description,
     guestCount,
-
+    localAddress,
     category,
     locationValue,
     tournamentDate
@@ -82,7 +83,11 @@ const ListingInfo: React.FC<ListingInfoProps> = ({
             {description}
         </div>
         <hr />
+        <div className='text-lg font-light text-neutral-500'>
+            {localAddress}
+        </div>
         <Map center={coordinates}/>
+
     </div>
   );
 }
