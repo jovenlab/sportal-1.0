@@ -107,7 +107,7 @@ const ListingCard: React.FC<ListingCardProps> = ({
             <div className='flex flex-row items-center gap-1'>
                 <div className='font-semibold'>
                     {/* ${price} */}
-                    {data.tournamentDate}
+                    {data.tournamentDate.toLocaleDateString()}
                 </div>
                 {/* {!reservation && (
                     <div className='font-light'>entry</div>

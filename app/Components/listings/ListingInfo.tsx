@@ -16,23 +16,21 @@ interface ListingInfoProps{
     user: SafeUser;
     description: string;
     guestCount: number;
-    roomCount: number;
-    bathroomCount: number;
+
     category: {
         icon: IconType;
         label: string;
         description: string;
     } | undefined
     locationValue: string;
-    tournamentDate: string;
+    tournamentDate: Date;
 }
 
 const ListingInfo: React.FC<ListingInfoProps> = ({
     user,
     description,
     guestCount,
-    roomCount,
-    bathroomCount,
+
     category,
     locationValue,
     tournamentDate
@@ -65,14 +63,9 @@ const ListingInfo: React.FC<ListingInfoProps> = ({
                 <div>
                     {guestCount} teams  
                 </div>
-                {/* <div>
-                    {roomCount} rooms
-                </div>
+
                 <div>
-                    {bathroomCount} bathrooms
-                </div> */}
-                <div>
-                    {tournamentDate} start
+                    {tournamentDate.toLocaleDateString()} start
                 </div>
             </div>
         </div>

@@ -27,8 +27,7 @@ const SearchModal = () => {
     const [location,setLocation] = useState<CountrySelectValue>()
     const [step,setStep] = useState(STEPS.LOCATION);
     const [guestCount, setGuestCount] = useState(1);
-    const [roomCount, setRoomCount] = useState(1);
-    const [bathroomCount, setBathroomCount] = useState(1);
+    
     const [dateRange, setDateRange] = useState<Range>({
         startDate: new Date(),
         endDate: new Date(),
@@ -61,8 +60,8 @@ const Map = useMemo(()=>dynamic(()=> import('../Map'),{
             ...currentQuery,
             locationValue: location?.value,
             guestCount,
-            roomCount,
-            bathroomCount
+            
+            
         };
 
         if(dateRange.startDate){
@@ -87,8 +86,8 @@ const Map = useMemo(()=>dynamic(()=> import('../Map'),{
         location,
         router,
         guestCount,
-        roomCount,
-        bathroomCount,
+        
+        
         dateRange,
         onNext,
         params
@@ -158,18 +157,6 @@ const Map = useMemo(()=>dynamic(()=> import('../Map'),{
                     subtitle="How many guests are coming?"
                     value={guestCount}
                     onChange={(value)=> setGuestCount(value)}
-                />
-                <Counter
-                    title="Rooms"
-                    subtitle="How many rooms do you need?"
-                    value={roomCount}
-                    onChange={(value)=> setRoomCount(value)}
-                />
-                <Counter
-                    title="Bathrooms"
-                    subtitle="How many bathrooms do you need?"
-                    value={bathroomCount}
-                    onChange={(value)=> setBathroomCount(value)}
                 />
             </div>
         )

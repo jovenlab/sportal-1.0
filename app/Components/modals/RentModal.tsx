@@ -11,7 +11,6 @@ import { FieldValues , SubmitHandler, useForm } from "react-hook-form";
 import CountrySelect from '../inputs/CountrySelect';
 import dynamic from 'next/dynamic';
 import Counter from '../inputs/Counter';
-import DatePicker from '../inputs/DatePicker';
 import ImageUpload from '../inputs/ImageUpload';
 import Input from '../inputs/Input';
 import axios from 'axios';
@@ -52,21 +51,17 @@ const RentModal = () => {
             category:'',
             location: null ,
             guestCount: 1,
-            roomCount:1,
-            bathroomCount: 1,
             imageSrc: '',
             price: 1,
             title:'',
             description:'',
-            tournamentDate:''
+            tournamentDate: null
         }
     });
 
     const category = watch('category');
     const location = watch('location');
     const guestCount = watch('guestCount');
-    const roomCount = watch('roomCount');
-    const bathroomCount = watch('bathroomCount');
     const imageSrc = watch('imageSrc');
 
     const Map = useMemo(()=>dynamic(()=> import('../Map'),{
@@ -96,7 +91,13 @@ const RentModal = () => {
         }
         setIsLoading(true);
 
-        axios.post('/api/listings', data)
+        
+        const formattedData = {
+            ...data,
+            tournamentDate: new Date(data.tournamentDate).toISOString(),
+        };
+
+        axios.post('/api/listings', formattedData)
             .then(()=>{
                 toast.success('Listing Created!');
                 router.refresh();
@@ -195,33 +196,16 @@ const RentModal = () => {
                     onChange={(value) => setCustomValue('guestCount', value)}
                 />
                 <hr />
-            {/* Tournament Date Picker */}  
-            {/* <DatePicker title="Date"
-                        subtitle="When does the tournament begin?"
-                        value={Date} 
-                        onChange={(date) => setCustomValue('Date', date)} /> */}
                 <Input
                     id="tournamentDate"
-                    label="Tournament Date (Ex. 02/08/2025)"
+                    label="Tournament Date"
+                    type="date"
                     disabled={isLoading}
                     register={register}
                     errors={errors}
                     required
                 />
-                {/* <hr />
-                <Counter
-                    title="Rooms"
-                    subtitle="How many rooms do you have?"
-                    value={roomCount}
-                    onChange={(value) => setCustomValue('roomCount', value)}
-                /> */}
-                {/* <hr />
-                <Counter
-                    title="Bathrooms"
-                    subtitle="How many bathrooms do you have?"
-                    value={bathroomCount}
-                    onChange={(value) => setCustomValue('bathroomCount', value)}
-                /> */}
+
             </div>
         )
     }
