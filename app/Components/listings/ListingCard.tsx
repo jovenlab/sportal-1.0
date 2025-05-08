@@ -18,6 +18,8 @@ interface ListingCardProps{
     actionLabel?: string;
     actionId?: string;
     currentUser?: SafeUser | null;
+    secondaryAction?: (id:string) => void;
+    secondaryActionLabel?: string;
 }
 
 const ListingCard: React.FC<ListingCardProps> = ({
@@ -27,7 +29,9 @@ const ListingCard: React.FC<ListingCardProps> = ({
     disabled,
     actionLabel,
     actionId="",
-    currentUser
+    currentUser,
+    secondaryAction,
+    secondaryActionLabel
 }) => {
     const router = useRouter();
     const {getByValue} = useCountries();
@@ -113,14 +117,29 @@ const ListingCard: React.FC<ListingCardProps> = ({
                     <div className='font-light'>entry</div>
                 )} */}
             </div>
+            {secondaryAction && secondaryActionLabel && (
+                <Button
+                    disabled={disabled}
+                    small
+                    label={secondaryActionLabel}
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        secondaryAction(data.id);
+                      }}
+                />
+
+            )}
+
             {onAction && actionLabel && (
                 <Button
                     disabled={disabled}
                     small
                     label={actionLabel}
                     onClick={handleCancel}
+                    outline
                 />
             )}
+
         </div>
     </div>
   )
