@@ -56,22 +56,27 @@ const ListingClient: React.FC<ListingClientProps> = ({
     const [totalPrice, setTotalPrice] = useState(listing.price);
     const [dateRange, setDateRange] = useState<Range>(initialDateRange);
 
-    const onCreateReservation = useCallback(()=>{
-        if(!currentUser){
+    const onCreateReservation = useCallback((formData: any) => {
+        if (!currentUser) {
             return loginModal.onOpen();
         }
+    
         setIsLoading(true);
-
+    
         axios.post('/api/reservations', {
             totalPrice,
             startDate: dateRange.startDate,
             endDate: dateRange.endDate,
-            listingId: listing?.id
+            listingId: listing?.id,
+            teamName: formData.teamName,
+            teamRepName: formData.teamRepName,
+            teamRepRole: formData.teamRepRole,
+            contactNumber: formData.contactNumber,
+            emailAddress: formData.emailAddress,
         })
-        .then(()=>{
+        .then(() => {
             toast.success('Listing reserved!');
             setDateRange(initialDateRange);
-            // Redirect to /trips
             router.push('/trips');
         })
         .catch(() => {
@@ -79,8 +84,8 @@ const ListingClient: React.FC<ListingClientProps> = ({
         })
         .finally(() => {
             setIsLoading(false);
-        })
-    },[
+        });
+    }, [
         totalPrice,
         dateRange,
         listing?.id,
@@ -88,6 +93,7 @@ const ListingClient: React.FC<ListingClientProps> = ({
         currentUser,
         loginModal
     ]);
+    
 
     useEffect(()=>{
         if(dateRange.startDate && dateRange.endDate){
@@ -143,15 +149,17 @@ const ListingClient: React.FC<ListingClientProps> = ({
                             md:order-last
                             md:col-span-3
                     '>
-                        <ListingReservation
-                            price={listing.price}
-                            totalPrice={totalPrice}
-                            onChangeDate={(value)=> setDateRange(value)}
-                            dateRange={dateRange}
-                            onSubmit={onCreateReservation}
-                            disabled={isLoading}
-                            disabledDates={disabledDates}
-                        />
+                    <ListingReservation
+                    price={listing.price}
+                    totalPrice={totalPrice}
+                    onChangeDate={(value) => setDateRange(value)}
+                    dateRange={dateRange}
+                    onSubmit={onCreateReservation} // <-- now passes form data
+                    disabled={isLoading}
+                    disabledDates={disabledDates}
+                    category={listing.category}
+                    />
+
                     </div>
                 </div>
             </div>
