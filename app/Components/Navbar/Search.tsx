@@ -5,6 +5,7 @@ import { differenceInDays } from 'date-fns';
 import { useSearchParams } from 'next/navigation';
 import React, { useMemo } from 'react'
 import { BiSearch } from 'react-icons/bi';
+import { useRouter } from 'next/navigation';
 
 const Search = () => {
   const searchModal = useSearchModal();
@@ -15,6 +16,7 @@ const Search = () => {
   const startDate = params?.get('startDate');
   const endDate = params?.get('endDate');
   const guestCount = params?.get('guestCount');
+  const router = useRouter();
 
   const locationLabel = useMemo(()=>{
     if(locationValue){
@@ -55,9 +57,9 @@ const Search = () => {
       py-2
       rounded-full
       shadow-sm
-      hover:shadow-md
+      
       transition
-      cursor-pointer
+      
       '>
         <div
           className='
@@ -67,14 +69,18 @@ const Search = () => {
             justify-between
         '>
             <div
+              onClick={()=>router.push('/properties')}
               className='
                 text-sm
                 font-semibold
                 px-6
+                cursor-pointer
+                hover:underline
             '>
                 {/* {locationLabel} */} My Tournaments
             </div>
                 <div
+                    onClick={()=>router.push('/trips')}
                     className='
                         hidden
                         sm:block
@@ -84,6 +90,8 @@ const Search = () => {
                         border-x-[1px]
                         flex-1
                         text-center
+                        cursor-pointer
+                        hover:underline
                     '>
                         {/* {durationLabel} */} My Games
                 </div>
@@ -97,8 +105,12 @@ const Search = () => {
                         flex-row
                         items-center
                         gap-3
+                        cursor-pointer
+                        hover:underline
                 '>
-                    <div className='hidden sm:block text-sm font-semibold text-center px-6'>
+                    <div 
+                    onClick={()=>router.push('/favorites')}
+                    className='hidden sm:block text-sm font-semibold text-center px-6'>
                       {/* {guestLabel} */} My Favorites
                     </div>
                     {/* <div className='hidden sm:block text-sm font-semibold text-center px-6 border-l-[1px]'>Tournaments</div> */}
