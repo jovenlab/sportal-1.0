@@ -10,20 +10,22 @@ interface IParams {
   listingId?: string;
 }
 
-
 export default async function TournamentPage({
     params
   }: {
     params: { listingId: string };
   }) {
     const currentUser = await getCurrentUser();
-  
+    
+
+
     if (!currentUser) {
       redirect('/'); // or redirect('/login') if you have a login page
     }
   
     const reservations = await getReservations(params);
     const listing = await getListingById(params);
+    
   
     if (!listing) {
       return (
@@ -42,7 +44,7 @@ export default async function TournamentPage({
           {reservations.length === 0 ? (
             <p>No reservations yet.</p>
           ) : (
-            <table className="w-full text-left border">
+            <table className="w-full text-left border text-xl">
               <thead className="bg-gray-100">
                 <tr>
                   <th className="p-2 border">Team Name</th>
@@ -50,8 +52,6 @@ export default async function TournamentPage({
                   <th className="p-2 border">Role</th>
                   <th className="p-2 border">Contact</th>
                   <th className="p-2 border">Email</th>
-                    {/* <th className="p-2 border">Start Date</th>
-                    <th className="p-2 border">End Date</th> */}
                 </tr>
               </thead>
               <tbody>
@@ -62,17 +62,22 @@ export default async function TournamentPage({
                     <td className="p-2 border">{res.teamRepRole || "-"}</td>
                     <td className="p-2 border">{res.contactNumber || "-"}</td>
                     <td className="p-2 border">{res.emailAddress || "-"}</td>
-                    {/* <td className="p-2 border">
-                      {new Date(res.startDate).toLocaleDateString()}
-                    </td>
-                    <td className="p-2 border">
-                      {new Date(res.endDate).toLocaleDateString()}
-                    </td> */}
+
                   </tr>
+
                 ))}
+
               </tbody>
             </table>
           )}
+
+          
+
+
+          
+
+
+
         </div>
       </ClientOnly>
     );
