@@ -4,6 +4,7 @@ import ClientOnly from "@/app/Components/ClientOnly";
 import EmptyState from "@/app/Components/EmptyState";
 import getCurrentUser from "@/app/actions/getCurrentUser";
 import { redirect } from "next/navigation";
+import RoundRobin from "@/app/Components/RoundRobin";
 
 
 interface IParams {
@@ -18,13 +19,13 @@ export default async function TournamentPage({
     const currentUser = await getCurrentUser();
     
 
-
     if (!currentUser) {
       redirect('/'); // or redirect('/login') if you have a login page
     }
   
     const reservations = await getReservations(params);
     const listing = await getListingById(params);
+    const teamNames = reservations.map(res => res.teamName);
     
   
     if (!listing) {
@@ -64,22 +65,20 @@ export default async function TournamentPage({
                     <td className="p-2 border">{res.emailAddress || "-"}</td>
 
                   </tr>
-
+                
                 ))}
 
               </tbody>
             </table>
+
           )}
-
-          
-
-
-          
-
-
-
+          <RoundRobin teamNames={teamNames}/>
         </div>
+
+     
       </ClientOnly>
+      
     );
+
   }
 
