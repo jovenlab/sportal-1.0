@@ -18,7 +18,8 @@ export async function POST(request: Request) {
     teamRepName,
     teamRepRole,
     contactNumber,
-    emailAddress
+    emailAddress,
+    fullName
   } = body;
 
   if (!listingId || !startDate || !endDate || !totalPrice) {
@@ -53,8 +54,9 @@ export async function POST(request: Request) {
           teamName: isBasketball ? teamName : "",
           teamRepName: isBasketball ? teamRepName : "",
           teamRepRole: isBasketball ? teamRepRole : "",
-          contactNumber: isBasketball ? contactNumber : "",
-          emailAddress: isBasketball ? emailAddress : ""
+          contactNumber: contactNumber,
+          emailAddress: emailAddress,
+          fullName: fullName || "",
         }
       }
     }

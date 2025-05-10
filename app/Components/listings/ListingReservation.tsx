@@ -39,6 +39,7 @@ const ListingReservation: React.FC<ListingReservationProps> = ({
       teamRepRole: '',
       contactNumber: '',
       emailAddress: '',
+      fullName: '',
     },
   });
 
@@ -105,6 +106,35 @@ const ListingReservation: React.FC<ListingReservationProps> = ({
         </div>
       )}
 
+      {category !== 'Basketball' && (
+        <div className='p-4 space-y-4'>
+
+          <Input
+            id="fullName"
+            label="Full Name"
+            register={register}
+            errors={errors}
+            required
+          />
+          <Input
+            id="contactNumber"
+            label="Contact Number"
+            register={register}
+            errors={errors}
+            required
+          />
+          <Input
+            id="emailAddress"
+            label="Email Address"
+            type="email"
+            register={register}
+            errors={errors}
+            required
+          />
+        </div>
+      )}
+
+      
       <hr />
 
       <div className='p-4'>

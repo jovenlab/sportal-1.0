@@ -73,6 +73,7 @@ const ListingClient: React.FC<ListingClientProps> = ({
             teamRepRole: formData.teamRepRole,
             contactNumber: formData.contactNumber,
             emailAddress: formData.emailAddress,
+            fullName: formData.fullName,
         })
         .then(() => {
             toast.success('Listing reserved!');
@@ -150,14 +151,14 @@ const ListingClient: React.FC<ListingClientProps> = ({
                             md:col-span-3
                     '>
                     <ListingReservation
-                    price={listing.price}
-                    totalPrice={totalPrice}
-                    onChangeDate={(value) => setDateRange(value)}
-                    dateRange={dateRange}
-                    onSubmit={onCreateReservation} // <-- now passes form data
-                    disabled={isLoading}
-                    disabledDates={disabledDates}
-                    category={listing.category}
+                        price={listing.price}
+                        totalPrice={totalPrice}
+                        onChangeDate={(value) => setDateRange(value)}
+                        dateRange={dateRange}
+                        onSubmit={onCreateReservation} // <-- now passes form data
+                        disabled={isLoading}
+                        disabledDates={disabledDates}
+                        category={listing.category}
                     />
 
                     </div>
