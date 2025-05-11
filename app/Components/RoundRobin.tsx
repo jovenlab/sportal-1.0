@@ -83,6 +83,7 @@ const RoundRobin: React.FC<RoundRobinProps> = ({teamNames}) => {
 
   const renderLeaderboard = () => (
     <div>
+      <hr/>
       <h2 className="text-lg font-medium text-sky-500 mb-2 mt-4 border-b border-gray-300 pb-2">Leaderboard</h2>
       <table className="table-auto w-full border border-gray-200 rounded-xl shadow-sm overflow-hidden text-sm text-gray-700 bg-white">
         <thead className="bg-gray-50 text-xs text-gray-500 uppercase tracking-wide">
@@ -188,15 +189,17 @@ const RoundRobin: React.FC<RoundRobinProps> = ({teamNames}) => {
   };
 
   return (
-    <div className="p-8 w-full mx-auto font-sans text-black space-y-8">
-
-      <button 
-        onClick={generateTables}
-        className="bg-neutral-200 hover:bg-neutral-300 text-gray-800 font-medium py-2 px-4 rounded-lg shadow-sm transition duration-150">
-        Generate Bracket
-      </button>
-
-
+    <div className=" w-full mx-auto font-sans text-black space-y-8">
+      
+<div className="flex justify-center">
+  <button 
+    onClick={generateTables}
+    className="bg-sky-500 hover:bg-neutral-300 text-white font-medium mt-8 py-2 px-4 rounded-lg shadow-sm transition duration-150"
+  >
+    Generate Round Robin Bracket
+  </button>
+</div>
+      
       {teams.length > 0 && (
         <div id="bracket">
           <h1 className="text-2xl font-semibold text-gray-900 mt-10">{title}</h1>

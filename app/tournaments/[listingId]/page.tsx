@@ -41,6 +41,8 @@ export default async function TournamentPage({
         <div className="p-8">
           <h1 className="text-2xl font-bold mb-4">Tournament Participants</h1>
           <p className="mb-2 text-gray-600">Listing: {listing.title}</p>
+          <p className="mb-2 text-gray-600">Category: {listing.category}</p>
+          <p className="mb-2 text-gray-600">Type: {listing.tournamentType}</p>
   
           {reservations.length === 0 ? (
             <p>No reservations yet.</p>
@@ -72,7 +74,10 @@ export default async function TournamentPage({
             </table>
 
           )}
-          <RoundRobin teamNames={teamNames}/>
+          {listing.tournamentType === "ROUND_ROBIN" && (
+            <RoundRobin teamNames={teamNames}/>
+          )}
+          
         </div>
 
      
