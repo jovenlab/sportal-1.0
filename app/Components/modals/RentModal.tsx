@@ -56,7 +56,8 @@ const RentModal = () => {
             title:'',
             description:'',
             tournamentDate: null,
-            localAddress: ''
+            localAddress: '',
+            tournamentType: 'ROUND_ROBIN',
         }
     });
 
@@ -64,6 +65,7 @@ const RentModal = () => {
     const location = watch('location');
     const guestCount = watch('guestCount');
     const imageSrc = watch('imageSrc');
+    const tournamentType = watch('tournamentType');
 
     const Map = useMemo(()=>dynamic(()=> import('../Map'),{
         ssr: false
@@ -197,6 +199,28 @@ const RentModal = () => {
                     title="Make arrangements for the Tournament"
                     subtitle="Provide some information!"
                 />
+                <div className="flex flex-col gap-2">
+                    <label className="text-md font-semibold">Tournament Type</label>
+                    <select
+                        id="tournamentType"
+                        {...register('tournamentType', { required: true })}
+                        disabled={isLoading}
+                        value={tournamentType}
+                        onChange={(e) =>
+                            setCustomValue('tournamentType', e.target.value)
+                        }
+                        className="border border-neutral-300 rounded-md py-5 px-3"
+                    >
+                        <option value="ROUND_ROBIN">Round Robin</option>
+                        <option value="SINGLE_ELIMINATION">Single Elimination</option>
+                    </select>
+                    {errors.tournamentType && (
+                        <span className="text-sm text-rose-500">
+                            Tournament type is required.
+                        </span>
+                    )}
+                </div>
+                <hr />
                 <Counter
                     title="Teams"
                     subtitle="How many teams do you allow?"
@@ -213,7 +237,6 @@ const RentModal = () => {
                     errors={errors}
                     required
                 />
-
             </div>
         )
     }

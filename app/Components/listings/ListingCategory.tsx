@@ -5,13 +5,15 @@ import { IconType } from 'react-icons';
 interface ListingCategoryProps{
     icon: IconType;
     label: string;
-    description: string
+    description: string;
+    tournamentTypeLabel: string;
 }
 
 const ListingCategory: React.FC<ListingCategoryProps> = ({
     icon: Icon,
     label,
-    description
+    description,
+    tournamentTypeLabel
 }) => {
   return (
     <div className='flex flex-col gap-6'>
@@ -22,7 +24,7 @@ const ListingCategory: React.FC<ListingCategoryProps> = ({
                     {label}
                 </div>
                 <div className='text-neutral-500 font-light'>
-                    {description}
+                    {tournamentTypeLabel} System
                 </div>
             </div>
         </div>

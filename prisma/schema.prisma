@@ -49,6 +49,11 @@ model Account {
   @@unique([provider, providerAccountId])
 }
 
+enum TournamentType {
+  ROUND_ROBIN
+  SINGLE_ELIMINATION
+}
+
 model Listing {
   id             String     @id @default(auto()) @map("_id") @db.ObjectId
   title          String
@@ -62,6 +67,9 @@ model Listing {
   userId         String     @db.ObjectId
   price          Int
   tournamentDate DateTime   // updated type
+
+  tournamentType TournamentType
+
 
   user           User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   reservations   Reservation[]

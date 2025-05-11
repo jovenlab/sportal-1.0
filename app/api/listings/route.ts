@@ -22,7 +22,8 @@ export async function POST(
         location,
         price,
         tournamentDate,
-        localAddress
+        localAddress,
+        tournamentType
     } = body;
 
 
@@ -42,6 +43,7 @@ export async function POST(
             tournamentDate,
             locationValue: location.value,
             localAddress,
+            tournamentType,
             price: parseInt(price,10),
             userId: currentUser.id
         }

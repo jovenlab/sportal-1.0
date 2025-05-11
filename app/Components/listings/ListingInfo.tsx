@@ -12,6 +12,9 @@ const Map = dynamic(()=> import('../Map'),{
     ssr: false
 });
 
+type TournamentType = 'ROUND_ROBIN' | 'SINGLE_ELIMINATION';
+
+
 interface ListingInfoProps{
     user: SafeUser;
     description: string;
@@ -25,6 +28,7 @@ interface ListingInfoProps{
     locationValue: string;
     localAddress: string;
     tournamentDate: Date;
+    tournamentType: TournamentType;
 }
 
 const ListingInfo: React.FC<ListingInfoProps> = ({
@@ -34,9 +38,14 @@ const ListingInfo: React.FC<ListingInfoProps> = ({
     localAddress,
     category,
     locationValue,
-    tournamentDate
+    tournamentDate,
+    tournamentType
 }) => {
     const { getByValue } = useCountries();
+    const tournamentTypeLabel = {
+    ROUND_ROBIN: 'Round Robin',
+    SINGLE_ELIMINATION: 'Single Elimination',
+    }[tournamentType];
 
     const coordinates = getByValue(locationValue)?. latlng;
   return (
@@ -76,6 +85,7 @@ const ListingInfo: React.FC<ListingInfoProps> = ({
                 icon={category.icon}
                 label={category.label}
                 description={category.description}
+                tournamentTypeLabel={tournamentTypeLabel}
             />
         )}
         <hr />
