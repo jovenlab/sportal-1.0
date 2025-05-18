@@ -73,6 +73,8 @@ model Listing {
 
   user           User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   reservations   Reservation[]
+
+  matches Match[] //for matches
 }
 
 
@@ -96,4 +98,17 @@ model Reservation {
 
   user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   listing         Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+}
+
+model Match {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  teamA     String
+  teamB     String
+  result    String   // e.g., "DRAW", "teamA", "teamB"
+  listingId String   @db.ObjectId
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  listing   Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
 }
