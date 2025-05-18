@@ -73,7 +73,12 @@ const TournamentDetails: React.FC<TournamentDetailsProps> = ({
             </table>
           </div>
           <div className="mt-10">
-            <RoundRobin teamNames={teamNames} />
+            <RoundRobin
+              teamNames={teamNames}
+              listingId={listing.id}
+              currentUserId={currentUser?.id}
+              listingOwnerId={listing.user.id}
+            />
           </div>
         </div>
       </div>

@@ -1,6 +1,6 @@
 'use client';
-
 import React, { useState } from 'react';
+import { useEffect } from 'react';
 
 type MatchResult = string | 'DRAW' | null;
 
@@ -10,28 +10,83 @@ interface ResultsMap {
 
 interface RoundRobinProps {
     teamNames: string[];
+    listingId: string; //to look for specific tournaments
+    currentUserId?: string | null;
+    listingOwnerId: string;
 }
 
-const RoundRobin: React.FC<RoundRobinProps> = ({teamNames}) => {
+const RoundRobin: React.FC<RoundRobinProps> = ({teamNames, listingId, currentUserId, listingOwnerId}) => {
   const [title, setTitle] = useState('');
   const [teamsInput, setTeamsInput] = useState('');
   const [teams, setTeams] = useState<string[]>([]);
   const [results, setResults] = useState<ResultsMap>({});
   const [modal, setModal] = useState<{ teamA: string, teamB: string, key: string, revKey: string } | null>(null);
-
-  const generateTables = () => {
-  
-    const initialResults: ResultsMap = {};
-    teamNames.forEach(team => {
-      teamNames.forEach(opponent => {
-        if (team !== opponent) {
-          const key = `${team}_vs_${opponent}`;
-          initialResults[key] = null;
+  const isOwner = currentUserId === listingOwnerId;
+  useEffect(() => {
+    const fetchMatches = async () => {
+      try {
+        const res = await fetch(`/api/match?listingId=${listingId}`);
+        if (!res.ok) {
+          console.error("❌ Failed to fetch matches");
+          return;
         }
+  
+        const data = await res.json();
+        const fetchedResults: ResultsMap = {};
+        const teamSet = new Set<string>();
+  
+        data.forEach((match: any) => {
+          const key = `${match.teamA}_vs_${match.teamB}`;
+          fetchedResults[key] = match.result;
+          teamSet.add(match.teamA);
+          teamSet.add(match.teamB);
+        });
+  
+        setResults(fetchedResults);
+        setTeams(Array.from(teamSet));
+      } catch (err) {
+        console.error("❌ Error loading matches:", err);
+      }
+    };
+  
+    fetchMatches();
+  }, [listingId]);
+
+  const generateTables = async () => {
+    console.log("✅ Button clicked! Listing ID:", listingId);
+    try {
+      const response = await fetch("/api/match/generate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ listingId }),
       });
-    });
-    setTeams(teamNames);
-    setResults(initialResults);
+
+      console.log("🛰️ Response status:", response.status);
+  
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("❌ Failed to generate matches:", errorText);
+        return;
+      }      
+  
+      const initialResults: ResultsMap = {};
+      console.log("🏁 Team names received:", teamNames);
+      teamNames.forEach(team => {
+        teamNames.forEach(opponent => {
+          if (team !== opponent) {
+            const key = `${team}_vs_${opponent}`;
+            initialResults[key] = null;
+          }
+        });
+      });
+  
+      setTeams(teamNames);
+      setResults(initialResults);
+    } catch (error) {
+      console.error("Error generating matches", error);
+    }
   };
 
   const calculateStats = (team: string) => {
@@ -43,8 +98,8 @@ const RoundRobin: React.FC<RoundRobinProps> = ({teamNames}) => {
       if (seen.has(matchId)) continue;
       seen.add(matchId);
       if (t1 === team || t2 === team) {
-        const result = results[key];
-        if (result) {
+        const result = results[key] || results[`${t2}_vs_${t1}`];
+        if (result && result !== 'PENDING') {
           games++;
           if (result === 'DRAW') draws++;
           else if (result === team) wins++;
@@ -56,14 +111,35 @@ const RoundRobin: React.FC<RoundRobinProps> = ({teamNames}) => {
     return { games, wins, losses, draws, points };
   };
 
-  const updateResult = (winner: MatchResult, key: string, revKey: string) => {
+  const updateResult = async (winner: MatchResult, key: string, revKey: string) => {
     setResults(prev => ({
       ...prev,
       [key]: winner,
       [revKey]: winner,
     }));
+  
     setModal(null);
+  
+    const [teamA, , teamB] = key.split('_');
+  
+    try {
+      await fetch("/api/match/update", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          teamA,
+          teamB,
+          result: winner,
+          listingId,
+        }),
+      });
+  
+      console.log(`🏆 Match updated: ${teamA} vs ${teamB} → ${winner}`);
+    } catch (err) {
+      console.error("❌ Failed to update match", err);
+    }
   };
+  
 
   const sortedTeamStats = () => {
     return teams.map(team => ({
@@ -149,7 +225,7 @@ const RoundRobin: React.FC<RoundRobinProps> = ({teamNames}) => {
                 {teams.map((colTeam, j) => {
                   const key = `${rowTeam}_vs_${colTeam}`;
                   const revKey = `${colTeam}_vs_${rowTeam}`;
-                  const val = results[key] || results[revKey];
+                  const val = results[key] ?? results[revKey] ?? null;
                   let text = '', color = 'bg-white';
                   if (i === j) {
                     text = '—';
@@ -162,6 +238,9 @@ const RoundRobin: React.FC<RoundRobinProps> = ({teamNames}) => {
                   } else if (val === rowTeam) {
                     text = 'W';
                     color = winColor;
+                  } else if (val === null || val === "PENDING") {
+                    text = '';
+                    color = 'bg-white';                  
                   } else {
                     text = 'L';
                     color = lossColor;
@@ -169,8 +248,11 @@ const RoundRobin: React.FC<RoundRobinProps> = ({teamNames}) => {
                   return (
                     <td
                       key={j}
-                      className={`cursor-pointer border px-3 py-1 text-center relative ${color}`}
-                      onClick={() => i !== j && setModal({ teamA: rowTeam, teamB: colTeam, key, revKey })}
+                      className={`cursor-pointer border px-3 py-1 text-center relative ${color} ${!isOwner ? 'cursor-not-allowed opacity-60' : ''}`}
+                      onClick={() => {
+                        if (!isOwner || i === j) return;
+                        setModal({ teamA: rowTeam, teamB: colTeam, key, revKey });
+                      }}
                     >
                       {text || (
                         <span className="text-black text-xs">
