@@ -1,9 +1,9 @@
 'use client';
 import React from 'react'
 
-import {SafeUser} from "@/app/types";
+import {SafeUser} from "@/types";
 import { IconType } from 'react-icons';
-import useCountries from '@/app/hooks/useCountries';
+import useCountries from '@/hooks/useCountries';
 import Avatar from "../Avatar";
 import ListingCategory from './ListingCategory';
 import dynamic from "next/dynamic";

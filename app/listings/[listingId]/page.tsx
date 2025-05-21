@@ -1,10 +1,10 @@
 import React from 'react'
-import getListingById from '@/app/actions/getListingById';
-import ClientOnly from '@/app/Components/ClientOnly';
-import EmptyState from '@/app/Components/EmptyState';
-import getCurrentUser from '@/app/actions/getCurrentUser';
+import getListingById from '@/actions/getListingById';
+import ClientOnly from '@/Components/ClientOnly';
+import EmptyState from '@/Components/EmptyState';
+import getCurrentUser from '@/actions/getCurrentUser';
 import ListingClient from './ListingClient';
-import getReservations from '@/app/actions/getReservations';
+import getReservations from '@/actions/getReservations';
 
 interface IParams{
     listingId?: string;

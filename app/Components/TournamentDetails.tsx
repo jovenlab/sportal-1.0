@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useMemo } from "react";
-import { SafeListing, SafeReservations, SafeUser } from "@/app/types";
+import { SafeListing, SafeReservations, SafeUser } from "@/types";
 import Container from "@/app/Components/Container";
 import ListingHead from "@/app/Components/listings/ListingHead";
 import ListingInfo from "@/app/Components/listings/ListingInfo";

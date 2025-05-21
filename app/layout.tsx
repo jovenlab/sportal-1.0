@@ -10,6 +10,11 @@ import LoginModal from "./Components/modals/LoginModal";
 import getCurrentUser from "./actions/getCurrentUser";
 import RentModal from "./Components/modals/RentModal";
 import SearchModal from "./Components/modals/SearchModal";
+import { Toaster } from 'react-hot-toast';
+
+// Inside your layout render
+<Toaster position="top-center" />
+
 
 
 // const geistSans = Geist({

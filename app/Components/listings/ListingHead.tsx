@@ -1,7 +1,7 @@
 'use client';
 import React from 'react'
-import {SafeUser} from '@/app/types';
-import useCountries from '@/app/hooks/useCountries';
+import {SafeUser} from '@/types';
+import useCountries from '@/hooks/useCountries';
 import Heading from '../Heading';
 import Image from 'next/image';
 import HeartButton from '../HeartButton';

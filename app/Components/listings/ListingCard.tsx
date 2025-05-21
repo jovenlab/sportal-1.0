@@ -1,9 +1,9 @@
 'use client';
 import React, { useCallback, useMemo } from 'react'
 
-import {SafeListing,SafeUser,SafeReservations} from "@/app/types";
+import {SafeListing,SafeUser,SafeReservations} from "@/types";
 import { useRouter } from 'next/navigation';
-import useCountries from '@/app/hooks/useCountries';
+import useCountries from '@/hooks/useCountries';
 import {format} from "date-fns"
 import Image from 'next/image';
 import HeartButton from '../HeartButton';

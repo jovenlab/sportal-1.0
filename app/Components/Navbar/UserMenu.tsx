@@ -4,11 +4,11 @@ import { useState } from 'react';
 import {AiOutlineMenu} from 'react-icons/ai'
 import Avatar from '../Avatar';
 import MenuItem from './MenuItem';
-import useRegisterModal from '@/app/hooks/useRegisterModal';
-import useLoginModal from '@/app/hooks/useLoginModal';
+import useRegisterModal from '@/hooks/useRegisterModal';
+import useLoginModal from '@/hooks/useLoginModal';
 import {signOut} from 'next-auth/react'
-import { SafeUser } from '@/app/types';
-import useRentModal from '@/app/hooks/useRentModal';
+import { SafeUser } from '@/types';
+import useRentModal from '@/hooks/useRentModal';
 import {useRouter} from 'next/navigation';
 
 interface UserMenuProps{
@@ -96,9 +96,10 @@ const UserMenu: React.FC<UserMenuProps> = ({
                     {currentUser ? (
                             <>
                             <MenuItem
-                                onClick={()=>{}}
+                                onClick={() => router.push('/profile')}
                                 label="Profile"
                             />
+
                             <MenuItem
                                 onClick={rentModal.onOpen}
                                 label="Create Tournament"

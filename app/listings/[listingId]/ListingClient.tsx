@@ -1,17 +1,17 @@
 'use client';
 import React, { useCallback, useState, useEffect } from 'react'
-import {SafeListing,SafeUser,SafeReservations} from '@/app/types';
+import {SafeListing,SafeUser,SafeReservations} from '@/types';
 import { useMemo } from 'react';
-import {categories} from '@/app/Components/Navbar/Categories';
-import Container from '@/app/Components/Container';
-import ListingHead from '@/app/Components/listings/ListingHead';
-import ListingInfo from "@/app/Components/listings/ListingInfo";
-import useLoginModal from '@/app/hooks/useLoginModal';
+import {categories} from '@/Components/Navbar/Categories';
+import Container from '@/Components/Container';
+import ListingHead from '@/Components/listings/ListingHead';
+import ListingInfo from "@/Components/listings/ListingInfo";
+import useLoginModal from '@/hooks/useLoginModal';
 import { useRouter } from 'next/navigation';
 import { eachDayOfInterval, differenceInCalendarDays } from 'date-fns';
 import axios from 'axios';
 import toast from 'react-hot-toast';
-import ListingReservation from '@/app/Components/listings/ListingReservation';
+import ListingReservation from '@/Components/listings/ListingReservation';
 import {Range} from "react-date-range";
 
 const initialDateRange = {

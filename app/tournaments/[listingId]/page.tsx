@@ -1,8 +1,8 @@
 // app/tournaments/[listingId]/page.tsx
-import getListingById from "@/app/actions/getListingById";
-import getReservations from "@/app/actions/getReservations";
-import getCurrentUser from "@/app/actions/getCurrentUser";
-import TournamentDetails from "@/app/Components/TournamentDetails"; // make sure the path is correct
+import getListingById from "@/actions/getListingById";
+import getReservations from "@/actions/getReservations";
+import getCurrentUser from "@/actions/getCurrentUser";
+import TournamentDetails from "@/Components/TournamentDetails"; // make sure the path is correct
 
 interface IParams {
   listingId?: string;
