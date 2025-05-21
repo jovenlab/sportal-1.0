@@ -1,5 +1,3 @@
-// File: app/api/upload-image/route.ts
-
 import { v2 as cloudinary } from 'cloudinary';
 import { NextResponse } from 'next/server';
 
@@ -18,14 +16,18 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'No image provided' }, { status: 400 });
     }
 
-    // Upload to Cloudinary
     const uploadRes = await cloudinary.uploader.upload(image, {
-      upload_preset: process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET, // Defined in your .env file
+      upload_preset: process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET,
     });
 
     return NextResponse.json({ url: uploadRes.secure_url });
   } catch (err) {
     console.error('[UPLOAD_IMAGE_ERROR]', err);
-    return NextResponse.json({ error: 'Upload failed' }, { status: 500 });
+
+    // 🛑 THIS is the fix: always return proper JSON
+    return NextResponse.json(
+      { error: 'Upload failed', details: String(err) },
+      { status: 500 }
+    );
   }
 }

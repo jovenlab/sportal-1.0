@@ -10,7 +10,6 @@ export default function ProfileForm({ user }: { user: any }) {
   const [age, setAge] = useState(user.age || '');
   const [location, setLocation] = useState(user.location || '');
   const [image, setImage] = useState(user.image || '/default-avatar.png');
-  const [preview, setPreview] = useState<string | null>(null);
   const [editing, setEditing] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -38,47 +37,30 @@ export default function ProfileForm({ user }: { user: any }) {
 };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
+  e.preventDefault();
+  setLoading(true);
 
-    try {
-      let uploadedImage = image;
+  try {
+    const uploadedImage = image;
 
-      if (preview) {
-        const uploadRes = await fetch('/api/upload-image', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ image: preview }),
-        });
+    const res = await fetch('/api/profile', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, bio, age, location, image: uploadedImage }),
+    });
 
-        const uploadData = await uploadRes.json();
-        if (uploadRes.ok) {
-          uploadedImage = uploadData.url;
-        } else {
-          throw new Error('Image upload failed');
-        }
-      }
-
-      const res = await fetch('/api/profile', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, bio, age, location, image: uploadedImage }),
-      });
-
-      if (res.ok) {
-        toast.success('Profile updated!');
-        setImage(uploadedImage);
-        setPreview(null);
-        setEditing(false);
-      } else {
-        toast.error('Error updating profile.');
-      }
-    } catch (err) {
-      toast.error('Something went wrong.');
-    } finally {
-      setLoading(false);
+    if (res.ok) {
+      toast.success('Profile updated!');
+      setEditing(false);
+    } else {
+      toast.error('Error updating profile.');
     }
-  };
+  } catch (err) {
+    toast.error('Something went wrong.');
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="max-w-2xl mx-auto bg-white text-gray-900 rounded-lg shadow p-6 mt-10">
@@ -87,14 +69,23 @@ export default function ProfileForm({ user }: { user: any }) {
       {/* Avatar and top info */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-4">
-          <Image
-            src={preview || image}
-            alt="User Avatar"
-            width={64}
-            height={64}
-            className="rounded-full border object-cover"
-            onError={(e) => (e.currentTarget.src = '/default-avatar.png')}
-          />
+          {!image || image.includes('your-storage.com') ? (
+              <Image
+                src="/default-avatar.png"
+                alt="Default Avatar"
+                width={64}
+                height={64}
+                className="rounded-full border object-cover"
+              />
+            ) : (
+              <Image
+                src={image}
+                alt="User Avatar"
+                width={64}
+                height={64}
+                className="rounded-full border object-cover"
+              />
+            )}
           <div>
             <h2 className="text-lg font-semibold">{user.name || 'Your Name'}</h2>
             <p className="text-sm text-gray-500">{user.email}</p>

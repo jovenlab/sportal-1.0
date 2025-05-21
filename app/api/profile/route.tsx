@@ -8,14 +8,16 @@ export async function POST(req: Request) {
 
  const { name, bio, age, location, image } = await req.json();
 
-  await db.user.update({
+const parsedAge = age ? parseInt(age) : null;
+
+await db.user.update({
   where: { id: user.id },
   data: {
     name,
     bio,
-    age,
+    age: parsedAge,
     location,
-    image, // ← ✅ now properly stored
+    image,
   },
 });
 
