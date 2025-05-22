@@ -8,11 +8,12 @@ import ListingHead from '@/app/Components/listings/ListingHead';
 import ListingInfo from "@/app/Components/listings/ListingInfo";
 import useLoginModal from '@/app/hooks/useLoginModal';
 import { useRouter } from 'next/navigation';
-import { eachDayOfInterval, differenceInCalendarDays } from 'date-fns';
+import { eachDayOfInterval, differenceInCalendarDays, format } from 'date-fns';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import ListingReservation from '@/app/Components/listings/ListingReservation';
 import {Range} from "react-date-range";
+import RoundRobin from '@/app/Components/RoundRobin';
 
 const initialDateRange = {
     startDate: new Date(),
@@ -55,6 +56,10 @@ const ListingClient: React.FC<ListingClientProps> = ({
     const [isLoading, setIsLoading] = useState(false);
     const [totalPrice, setTotalPrice] = useState(listing.price);
     const [dateRange, setDateRange] = useState<Range>(initialDateRange);
+
+    const tournamentStarted = useMemo(() => {
+        return new Date() >= new Date(listing.tournamentDate);
+    }, [listing.tournamentDate]);
 
     const onCreateReservation = useCallback((formData: any) => {
         if (!currentUser) {
@@ -143,25 +148,45 @@ const ListingClient: React.FC<ListingClientProps> = ({
                         tournamentType={listing.tournamentType}
                         locationValue={listing.locationValue}
                         tournamentDate={listing.tournamentDate}
-                    />
+                        
+                        />
                     <div className='
-                            order-first
-                            mb-10
-                            md:order-last
-                            md:col-span-3
-                    '>
-                    <ListingReservation
-                        price={listing.price}
-                        totalPrice={totalPrice}
-                        onChangeDate={(value) => setDateRange(value)}
-                        dateRange={dateRange}
-                        onSubmit={onCreateReservation} // <-- now passes form data
-                        disabled={isLoading}
-                        disabledDates={disabledDates}
-                        category={listing.category}
-                    />
-
-                    </div>
+                        order-first
+                        mb-10
+                        md:order-last
+                        md:col-span-3
+                        '>
+                        {currentUser?.id === listing.user.id && !tournamentStarted && (
+                        <div className="mb-4">
+                            <button
+                            onClick={() => router.push(`/tournaments/${listing.id}`)}
+                            className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded shadow"
+                            >
+                            Begin Tournament
+                            </button>
+                        </div>
+                        )}
+                        {!tournamentStarted ? (
+                            <ListingReservation
+                            price={listing.price}
+                            totalPrice={totalPrice}
+                            onChangeDate={(value) => setDateRange(value)}
+                            dateRange={dateRange}
+                            onSubmit={onCreateReservation}
+                            disabled={isLoading}
+                            disabledDates={disabledDates}
+                            category={listing.category}
+                            />
+                        ) : (
+                            <RoundRobin
+                            teamNames={reservations.map(r => r.teamName).filter(Boolean)}
+                            listingId={listing.id}
+                            currentUserId={currentUser?.id}
+                            listingOwnerId={listing.user.id}
+                            tournamentDate={listing.tournamentDate}
+                            />
+                        )}
+                        </div>
                 </div>
             </div>
         </div>

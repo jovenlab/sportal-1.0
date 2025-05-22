@@ -1,3 +1,4 @@
+//You reserve here if tournament not started yet
 import React from 'react'
 import getListingById from '@/app/actions/getListingById';
 import ClientOnly from '@/app/Components/ClientOnly';
