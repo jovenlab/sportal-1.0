@@ -32,7 +32,6 @@ export async function POST(req: Request) {
     }
 
     const teams = reservations.map((res) => res.teamName).filter(Boolean);
-
     const matchCreatePromises = [];
 
     for (let i = 0; i < teams.length; i++) {
@@ -42,7 +41,7 @@ export async function POST(req: Request) {
             data: {
               teamA: teams[i]!,
               teamB: teams[j]!,
-              result: "PENDING", // Optional default
+              result: "PENDING",
               listingId,
             },
           })
@@ -52,8 +51,24 @@ export async function POST(req: Request) {
 
     await Promise.all(matchCreatePromises);
 
+    // ✅ Update tournamentDate only if it's in the future
+    const listing = await prisma.listing.findUnique({
+      where: { id: listingId },
+    });
+
+    if (listing && new Date(listing.tournamentDate) > new Date()) {
+      await prisma.listing.update({
+        where: { id: listingId },
+        data: { tournamentDate: new Date() },
+      });
+      console.log("📆 Tournament start time updated");
+    }
+
     console.log(`✅ ${matchCreatePromises.length} matches generated`);
-    return NextResponse.json({ success: true, count: matchCreatePromises.length });
+    return NextResponse.json({
+      success: true,
+      count: matchCreatePromises.length,
+    });
   } catch (err: any) {
     console.error("❌ Server Error in /api/match/generate:", err);
     return new NextResponse("Internal Server Error", { status: 500 });

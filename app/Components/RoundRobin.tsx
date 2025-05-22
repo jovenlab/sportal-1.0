@@ -1,6 +1,7 @@
 'use client';
 import React, { useState } from 'react';
 import { useEffect } from 'react';
+import toast from 'react-hot-toast';
 
 type MatchResult = string | 'DRAW' | null;
 
@@ -13,10 +14,12 @@ interface RoundRobinProps {
     listingId: string; //to look for specific tournaments
     currentUserId?: string | null;
     listingOwnerId: string;
+    tournamentDate: string;
 }
 
-const RoundRobin: React.FC<RoundRobinProps> = ({teamNames, listingId, currentUserId, listingOwnerId}) => {
+const RoundRobin: React.FC<RoundRobinProps> = ({teamNames, listingId, currentUserId, listingOwnerId, tournamentDate}) => {
   const [title, setTitle] = useState('');
+  const tournamentHasStarted = new Date(tournamentDate) <= new Date();
   const [teamsInput, setTeamsInput] = useState('');
   const [teams, setTeams] = useState<string[]>([]);
   const [results, setResults] = useState<ResultsMap>({});
@@ -67,7 +70,8 @@ const RoundRobin: React.FC<RoundRobinProps> = ({teamNames, listingId, currentUse
   
       if (!response.ok) {
         const errorText = await response.text();
-        console.error("❌ Failed to generate matches:", errorText);
+        // console.error("❌ Failed to generate matches:", errorText);
+        toast.error("Failed to Generate Matches: Not Enough Teams");
         return;
       }      
   
@@ -273,14 +277,16 @@ const RoundRobin: React.FC<RoundRobinProps> = ({teamNames, listingId, currentUse
   return (
     <div className=" w-full mx-auto font-sans text-black space-y-8">
       
-<div className="flex justify-center">
-  <button 
-    onClick={generateTables}
-    className="bg-sky-500 hover:bg-neutral-300 text-white font-medium mt-8 py-2 px-4 rounded-lg shadow-sm transition duration-150"
-  >
-    Generate Round Robin Bracket
-  </button>
-</div>
+      {isOwner && !tournamentHasStarted && (
+        <div className="flex justify-center">
+          <button 
+            onClick={generateTables}
+            className="bg-sky-500 hover:bg-neutral-300 text-white font-medium mt-8 py-2 px-4 rounded-lg shadow-sm transition duration-150"
+          >
+            Generate Round Robin Bracket
+          </button>
+        </div>
+      )}
       
       {teams.length > 0 && (
         <div id="bracket">

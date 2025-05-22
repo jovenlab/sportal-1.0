@@ -1,11 +1,11 @@
-'use client';
-import React from 'react';
-import { useForm, FieldValues } from 'react-hook-form';
-import { Range } from 'react-date-range';
+"use client";
+import React from "react";
+import { useForm, FieldValues } from "react-hook-form";
+import { Range } from "react-date-range";
 
-import Calendar from '../inputs/Calendar';
+import Calendar from "../inputs/Calendar";
 import Button from "../Button";
-import Input from '../inputs/Input';
+import Input from "../inputs/Input";
 
 interface ListingReservationProps {
   price: number;
@@ -34,12 +34,12 @@ const ListingReservation: React.FC<ListingReservationProps> = ({
     formState: { errors },
   } = useForm<FieldValues>({
     defaultValues: {
-      teamName: '',
-      teamRepName: '',
-      teamRepRole: '',
-      contactNumber: '',
-      emailAddress: '',
-      fullName: '',
+      teamName: "",
+      teamRepName: "",
+      teamRepRole: "",
+      contactNumber: "",
+      emailAddress: "",
+      fullName: "",
     },
   });
 
@@ -50,23 +50,23 @@ const ListingReservation: React.FC<ListingReservationProps> = ({
   return (
     <form
       onSubmit={handleSubmit(handleReservationSubmit)}
-      className='
+      className="
         bg-white
         rounded-xl
         border-[1px]
         border-neutral-200
         overflow-hidden
-      '
+      "
     >
-      <div className='flex flex-row items-center gap-1 p-4'>
-        <div className='text-2xl font-semibold'>${price}</div>
-        <div className='font-light text-neutral-600'>entrance fee</div>
+      <div className="flex flex-row items-center gap-1 p-4">
+        <div className="text-2xl font-semibold">${price}</div>
+        <div className="font-light text-neutral-600">Entrance Fee</div>
       </div>
 
       <hr />
 
-      {category === 'Basketball' && (
-        <div className='p-4 space-y-4'>
+      {category === "Basketball" && (
+        <div className="p-4 space-y-4">
           <Input
             id="teamName"
             label="Team Name"
@@ -106,9 +106,8 @@ const ListingReservation: React.FC<ListingReservationProps> = ({
         </div>
       )}
 
-      {category !== 'Basketball' && (
-        <div className='p-4 space-y-4'>
-
+      {category !== "Basketball" && (
+        <div className="p-4 space-y-4">
           <Input
             id="fullName"
             label="Full Name"
@@ -132,12 +131,10 @@ const ListingReservation: React.FC<ListingReservationProps> = ({
             required
           />
         </div>
-      )}
-
-      
+      )}      
       <hr />
 
-      <div className='p-4'>
+      <div className="p-4">
         <Button
           disabled={disabled}
           label="Reserve a spot"
