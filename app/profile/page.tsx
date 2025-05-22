@@ -1,6 +1,6 @@
 import { getCurrentUser } from '@/libs/auth';
 import ProfileForm from '@/Components/ProfileForm';
-
+import Link from 'next/link'; // ✅ Add this import
 
 export default async function ProfilePage() {
   const user = await getCurrentUser();
@@ -10,7 +10,18 @@ export default async function ProfilePage() {
   }
 
   return (
-    <div className="max-w-xl mx-auto p-6">
+    <div className="max-w-2xl mx-auto bg-white text-gray-900 rounded-2xl shadow-lg p-8 space-y-6">
+      {/* ✅ Add this button */}
+     <div className="flex items-center justify-between bg-white border rounded-md px-4 py-3 shadow mb-6">
+  <h1 className="text-xl font-bold text-gray-800">Profile</h1>
+  <Link
+    href="/"
+    className="text-sm text-blue-600 hover:underline font-medium"
+  >
+    ← Back to Home
+  </Link>
+</div>
+
       <ProfileForm user={user} />
     </div>
   );
