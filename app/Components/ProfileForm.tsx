@@ -236,13 +236,18 @@ export default function ProfileForm({ user }: { user: any }) {
     </div>
     <div>
       <label className="block text-sm font-medium mb-1">Level</label>
-      <input
-        type="text"
+      <select
         value={level}
         disabled={!editing || loading}
         onChange={(e) => setLevel(e.target.value)}
         className="w-full bg-white border border-gray-300 text-gray-800 px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
-      />
+      >
+        <option value="">Select level</option>
+        <option value="Beginner">Beginner</option>
+        <option value="Intermediate">Intermediate</option>
+        <option value="Advanced">Advanced</option>
+        <option value="Elite">Elite</option>
+      </select>
     </div>
   </div>
 </section>
