@@ -28,7 +28,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
   return (
     <CldUploadWidget
         onSuccess={handleUpload}
-        uploadPreset="jovenlabs"
+        uploadPreset={process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET!}
         options={{
             maxFiles: 1
         }}

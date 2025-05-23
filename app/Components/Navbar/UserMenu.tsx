@@ -73,8 +73,8 @@ const UserMenu: React.FC<UserMenuProps> = ({
                     transition
                 '>
                     
-                    <div className='hidden md:block'>
-                        <Avatar src={currentUser?.image}/>
+                    <div className="hidden md:block w-8 h-8 relative">
+                        <Avatar src={currentUser?.image} />
                     </div>
                     <AiOutlineMenu/>
             </div>
@@ -96,7 +96,7 @@ const UserMenu: React.FC<UserMenuProps> = ({
                     {currentUser ? (
                             <>
                             <MenuItem
-                                onClick={()=>{}}
+                                onClick={() => router.push('/profile')}
                                 label="Profile"
                             />
                             <MenuItem
