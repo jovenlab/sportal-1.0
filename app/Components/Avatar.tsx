@@ -10,14 +10,16 @@ const Avatar: React.FC<AvatarProps> = ({
   src
 }) => {
   return (
-    <Image
-        className="rounded-full"
-        height="30"
-        width="30"
-        alt="Avatar"
+    <div className="relative w-8 h-8 rounded-full overflow-hidden">
+      <Image
         src={src || "/images/noprofile.png"}
-    />
-  )
-}
+        alt="User Avatar"
+        fill
+        className="object-cover"
+        sizes="32px"
+      />
+    </div>
+  );
+};
 
 export default Avatar

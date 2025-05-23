@@ -13,20 +13,31 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User{
-  id String @id @default(auto()) @map("_id") @db.ObjectId
-  name String?
-  email String? @unique
-  emailVerified DateTime?
-  image String?
+model User {
+  id             String    @id @default(auto()) @map("_id") @db.ObjectId
+  name           String?
+  email          String?   @unique
+  emailVerified  DateTime?
+  image          String?
+  bio            String?
+  age            Int?         // ← make sure this is here
+  location       String?      // ← and this
   hashedPassword String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  favoriteIds String[] @db.ObjectId
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  favoriteIds    String[]  @db.ObjectId
 
-  accounts Account[]
-  listings Listing[]
-  reservations Reservation[]
+  sport          String?
+  team           String?
+  level          String?
+  achievements   String?
+  instagram      String?
+  facebook       String?
+  strava         String?
+
+  accounts       Account[]
+  listings       Listing[]
+  reservations   Reservation[]
 }
 
 
