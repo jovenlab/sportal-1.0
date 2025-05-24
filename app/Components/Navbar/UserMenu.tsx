@@ -1,6 +1,5 @@
 'use client';
-import React, { useCallback } from 'react'
-import { useState } from 'react';
+import React, { useCallback, useState,useRef, useEffect } from 'react'
 import {AiOutlineMenu} from 'react-icons/ai'
 import Avatar from '../Avatar';
 import MenuItem from './MenuItem';
@@ -24,6 +23,7 @@ const UserMenu: React.FC<UserMenuProps> = ({
     const rentModal = useRentModal();
 
     const [isOpen, setIsOpen] = useState(false);
+    const menuRef = useRef<HTMLDivElement>(null); // ref to detect outside click
     
     const toggleOpen = useCallback(()=>{
         setIsOpen((value)=> !value);
@@ -35,9 +35,28 @@ const UserMenu: React.FC<UserMenuProps> = ({
         }
         rentModal.onOpen();
     },[currentUser, loginModal, rentModal]);  
+
+    // Close on outside click
+    useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+        if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+        }
+    }
+
+    if (isOpen) {
+        document.addEventListener('mousedown', handleClickOutside);
+    } else {
+        document.removeEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+        document.removeEventListener('mousedown', handleClickOutside);
+    };
+    }, [isOpen]);
     
     return (
-    <div className='relative'>
+    <div className='relative' ref={menuRef}>
         <div className='flex flex-row item-center gap-3'>
             <div
                 onClick={onRent}
