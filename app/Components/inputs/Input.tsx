@@ -7,7 +7,7 @@ import{
     FieldValues,
     UseFormRegister
 } from "react-hook-form";
-import {BiDollar} from  "react-icons/bi"
+import { LuPhilippinePeso } from "react-icons/lu";
 
 interface InputProps{
     id: string;
@@ -33,7 +33,7 @@ const Input: React.FC<InputProps> = ({
   return (
     <div className="w-full relative">
         {formatPrice && (
-            <BiDollar
+            <LuPhilippinePeso
                 size={24}
                 className='
                     text-neutral-700
@@ -82,6 +82,7 @@ const Input: React.FC<InputProps> = ({
                     peer-focus:scale-75
                     peer-focus:-translate-y-4
                     ${errors[id] ? 'text-rose-500' : 'text-zinc-400'}
+                    pointer-events-none
         `}>
             {label}
         </label>
