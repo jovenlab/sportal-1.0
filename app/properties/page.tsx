@@ -5,6 +5,7 @@ import getCurrentUser from "../actions/getCurrentUser";
 import getReservations from "../actions/getReservations";
 import PropertiesClient from "./PropertiesClient";
 import getListings from "../actions/getListings";
+import FeedbackComponent from "../Components/Feedback";
 
 const PropertiesPage = async () => {
     const currentUser = await getCurrentUser();
@@ -16,6 +17,7 @@ const PropertiesPage = async () => {
                     title="Unauthorized"
                     subtitle="You need to be logged in to view this page."
                 />
+                <FeedbackComponent />
             </ClientOnly>
         )
     }
@@ -31,6 +33,7 @@ const PropertiesPage = async () => {
                     title="No properties found"
                     subtitle="Looks like you have no properties"
                 />
+                <FeedbackComponent />
             </ClientOnly>
 
         )
@@ -41,6 +44,7 @@ const PropertiesPage = async () => {
                 listings={listings}
                 currentUser={currentUser}
             />
+            <FeedbackComponent />
         </ClientOnly>
     )
 

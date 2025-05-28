@@ -6,6 +6,7 @@ import EmptyState from '@/app/Components/EmptyState';
 import getCurrentUser from '@/app/actions/getCurrentUser';
 import ListingClient from './ListingClient';
 import getReservations from '@/app/actions/getReservations';
+import FeedbackComponent from '@/app/Components/Feedback';
 
 interface IParams{
     listingId?: string;
@@ -20,6 +21,7 @@ const ListingPage = async ({params}: {params: IParams}) => {
         return (
             <ClientOnly>
                 <EmptyState/>
+                <FeedbackComponent />
             </ClientOnly>
         )
     }
@@ -31,6 +33,7 @@ const ListingPage = async ({params}: {params: IParams}) => {
             reservations={reservations}
             currentUser={currentUser}
         />
+        <FeedbackComponent />
     </ClientOnly>
   );
 }

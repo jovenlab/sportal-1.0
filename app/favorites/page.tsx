@@ -4,6 +4,7 @@ import ClientOnly from "../Components/ClientOnly";
 import getCurrentUser from "../actions/getCurrentUser";
 import getFavoriteListings from "../actions/getFavoriteListings";
 import FavoritesClient from "./FavoritesClient";
+import FeedbackComponent from "../Components/Feedback";
 
 
 const ListingPage = async () => {
@@ -17,6 +18,7 @@ const ListingPage = async () => {
                     title="No favorites found"
                     subtitle="Looks like you have no favorite listings"
                 />
+                <FeedbackComponent />
             </ClientOnly>
         )
     }
@@ -27,6 +29,7 @@ const ListingPage = async () => {
                 listings={listings}
                 currentUser={currentUser}
             />
+            <FeedbackComponent />
         </ClientOnly>
     )
 
