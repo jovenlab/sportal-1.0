@@ -4,6 +4,7 @@ import ClientOnly from "../Components/ClientOnly";
 import getCurrentUser from "../actions/getCurrentUser";
 import getReservations from "../actions/getReservations";
 import ReservationsClient from "./ReservationsClient";
+import FeedbackComponent from "../Components/Feedback";
 
 const ReservationsPage = async () => {
     const currentUser = await getCurrentUser();
@@ -15,6 +16,7 @@ const ReservationsPage = async () => {
                     title="Unauthorized"
                     subtitle="Please login"
                 />
+                <FeedbackComponent />
             </ClientOnly>
         )
     }
@@ -30,6 +32,7 @@ const ReservationsPage = async () => {
                     title="No reservations found"
                     subtitle="Looks like you have no reservations"
                 />
+                <FeedbackComponent />
             </ClientOnly>
         )
     }
@@ -40,6 +43,7 @@ const ReservationsPage = async () => {
                 reservations={reservations}
                 currentUser={currentUser}
             />
+            <FeedbackComponent />
         </ClientOnly>
     )
 };

@@ -4,46 +4,42 @@ import ClientOnly from "../Components/ClientOnly";
 import getCurrentUser from "../actions/getCurrentUser";
 import getReservations from "../actions/getReservations";
 import TripsClient from "./TripsClient";
+import FeedbackComponent from "../Components/Feedback";
 
 const TripsPage = async () => {
-    const currentUser = await getCurrentUser();
+  const currentUser = await getCurrentUser();
 
-    if(!currentUser){
-        return (
-            <ClientOnly>
-                <EmptyState
-                    title="Unauthorized"
-                    subtitle="You need to be logged in to view this page."
-                />
-            </ClientOnly>
-        )
-    }
-
-    const reservations = await getReservations({
-        userId: currentUser.id
-    });
-
-    if(reservations.length === 0){
-        return (
-            <ClientOnly>
-                <EmptyState
-                    title="No tournaments found"
-                    subtitle="You haven't joined any tournaments yet."
-                />
-            </ClientOnly>
-
-        )
-    }
+  if (!currentUser) {
     return (
-        <ClientOnly>
-            <TripsClient
-                reservations={reservations}
-                currentUser={currentUser}
-            />
-        </ClientOnly>
-    )
+      <ClientOnly>
+        <EmptyState
+          title="Unauthorized"
+          subtitle="You need to be logged in to view this page."
+        />
+      </ClientOnly>
+    );
+  }
 
-}
+  const reservations = await getReservations({
+    userId: currentUser.id,
+  });
 
+  if (reservations.length === 0) {
+    return (
+      <ClientOnly>
+        <EmptyState
+          title="No tournaments found"
+          subtitle="You haven't joined any tournaments yet."
+        />
+      </ClientOnly>
+    );
+  }
+  return (
+    <ClientOnly>
+      <TripsClient reservations={reservations} currentUser={currentUser} />
+      <FeedbackComponent />
+    </ClientOnly>
+  );
+};
 
-export default TripsPage
+export default TripsPage;

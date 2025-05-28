@@ -5,6 +5,7 @@ import EmptyState from "./Components/EmptyState";
 import getListings,{IListingsParams} from "./actions/getListings";
 import ListingCard from "./Components/listings/ListingCard";
 import getCurrentUser from "./actions/getCurrentUser";
+import FeedbackComponent from "./Components/Feedback";
 
 interface HomeProps{
     searchParams: IListingsParams
@@ -49,6 +50,7 @@ const Home = async ({searchParams}:HomeProps) => {
                     })}
                 </div>
             </Container>
+            <FeedbackComponent />
         </ClientOnly>
 
     )
