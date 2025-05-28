@@ -3,6 +3,7 @@ import getListingById from "@/app/actions/getListingById";
 import getReservations from "@/app/actions/getReservations";
 import getCurrentUser from "@/app/actions/getCurrentUser";
 import TournamentDetails from "@/app/Components/TournamentDetails"; // make sure the path is correct
+import FeedbackComponent from "@/app/Components/Feedback";
 
 interface IParams {
   listingId?: string;
@@ -22,11 +23,14 @@ const ListingPage = async ({ params }: { params: IParams }) => {
   }
 
   return (
-    <TournamentDetails
-      listing={listing}
-      reservations={reservations}
-      currentUser={currentUser}
-    />
+    <>
+      <TournamentDetails
+        listing={listing}
+        reservations={reservations}
+        currentUser={currentUser}
+      />
+      <FeedbackComponent />
+    </>
   );
 };
 
