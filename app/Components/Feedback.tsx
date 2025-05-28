@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { FaCommentDots, FaTimes } from "react-icons/fa";
+import toast from "react-hot-toast";
 
 const FeedbackComponent = () => {
   const [feedback, setFeedback] = useState("");
@@ -12,7 +13,7 @@ const FeedbackComponent = () => {
     e.preventDefault();
 
     if (!feedback.trim()) {
-      alert("Please enter feedback before submitting.");
+      toast.error("Please enter feedback before submitting.");
       return;
     }
 
@@ -29,18 +30,18 @@ const FeedbackComponent = () => {
 
       if (!res.ok) {
         console.error("❌ Feedback failed:", text);
-        alert("Failed to send feedback: " + text);
+        toast.error("Failed to send feedback. Please try again.");
         return;
       }
 
       const data = JSON.parse(text);
       console.log("✅ Feedback submitted:", data);
-      alert("✅ Thanks for your feedback!");
+      toast.success("Thanks for your feedback!");
       setFeedback("");
       setOpen(false);
     } catch (err) {
       console.error("❌ Feedback exception:", err);
-      alert("Something went wrong. Please try again.");
+      toast.error("Something went wrong. Please try again.");
     } finally {
       setSending(false);
     }
