@@ -10,19 +10,37 @@ const FeedbackComponent = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!feedback.trim()) {
+      alert("Please enter feedback before submitting.");
+      return;
+    }
+
     setSending(true);
+
     try {
       const res = await fetch("/api/feedback", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ feedback }),
       });
-      const data = await res.json();
+
+      const text = await res.text();
+
+      if (!res.ok) {
+        console.error("❌ Feedback failed:", text);
+        alert("Failed to send feedback: " + text);
+        return;
+      }
+
+      const data = JSON.parse(text);
       console.log("✅ Feedback submitted:", data);
+      alert("✅ Thanks for your feedback!");
       setFeedback("");
       setOpen(false);
     } catch (err) {
-      console.error("❌ Feedback error:", err);
+      console.error("❌ Feedback exception:", err);
+      alert("Something went wrong. Please try again.");
     } finally {
       setSending(false);
     }
