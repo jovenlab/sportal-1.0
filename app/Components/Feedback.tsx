@@ -1,19 +1,54 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaCommentDots, FaTimes } from "react-icons/fa";
 import toast from "react-hot-toast";
+
+const LIMIT = 3;
+const RESET_TIME_MS = 8 * 60 * 60 * 1000; // 8 hours
 
 const FeedbackComponent = () => {
   const [feedback, setFeedback] = useState("");
   const [sending, setSending] = useState(false);
   const [open, setOpen] = useState(false);
+  const [submissionCount, setSubmissionCount] = useState(0);
+  const [hasReachedLimit, setHasReachedLimit] = useState(false);
+
+  // Check and reset submission limit on mount
+  useEffect(() => {
+    const storedCount = parseInt(
+      localStorage.getItem("feedbackCount") || "0",
+      10
+    );
+    const lastSubmitTime = parseInt(
+      localStorage.getItem("feedbackTimestamp") || "0",
+      10
+    );
+    const now = Date.now();
+
+    if (now - lastSubmitTime > RESET_TIME_MS) {
+      localStorage.setItem("feedbackCount", "0");
+      localStorage.setItem("feedbackTimestamp", now.toString());
+      setSubmissionCount(0);
+      setHasReachedLimit(false);
+    } else {
+      setSubmissionCount(storedCount);
+      setHasReachedLimit(storedCount >= LIMIT);
+    }
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!feedback.trim()) {
       toast.error("Please enter feedback before submitting.");
+      return;
+    }
+
+    if (submissionCount >= LIMIT) {
+      toast.error(
+        "You’ve reached the maximum number of feedback submissions (3 in 8 hours)."
+      );
       return;
     }
 
@@ -37,6 +72,12 @@ const FeedbackComponent = () => {
       const data = JSON.parse(text);
       console.log("✅ Feedback submitted:", data);
       toast.success("Thanks for your feedback!");
+
+      const newCount = submissionCount + 1;
+      localStorage.setItem("feedbackCount", newCount.toString());
+      localStorage.setItem("feedbackTimestamp", Date.now().toString());
+      setSubmissionCount(newCount);
+      setHasReachedLimit(newCount >= LIMIT);
       setFeedback("");
       setOpen(false);
     } catch (err) {
@@ -79,14 +120,18 @@ const FeedbackComponent = () => {
             />
             <button
               type="submit"
-              disabled={sending}
+              disabled={sending || hasReachedLimit}
               className={`w-full py-2 px-4 rounded-md text-white transition ${
-                sending
+                sending || hasReachedLimit
                   ? "bg-gray-400 cursor-not-allowed"
                   : "bg-green-600 hover:bg-green-700"
               }`}
             >
-              {sending ? "Sending..." : "Send Feedback"}
+              {hasReachedLimit
+                ? "Limit Reached"
+                : sending
+                ? "Sending..."
+                : "Send Feedback"}
             </button>
           </form>
         </div>
