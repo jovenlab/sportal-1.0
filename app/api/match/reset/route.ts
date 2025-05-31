@@ -17,29 +17,32 @@ export async function POST(request: Request) {
       return new NextResponse("Missing listingId", { status: 400 });
     }
 
-    // Get the listing to check ownership
+    // Verify the user owns the tournament
     const listing = await prisma.listing.findUnique({
-      where: { id: listingId },
+      where: {
+        id: listingId
+      }
     });
 
-    if (!listing) {
-      return new NextResponse("Listing not found", { status: 404 });
+    if (!listing || listing.userId !== currentUser.id) {
+      return new NextResponse("Unauthorized", { status: 401 });
     }
 
-    // Check if current user is the tournament creator
-    if (listing.userId !== currentUser.id) {
-      return new NextResponse("Forbidden: Not tournament owner", { status: 403 });
-    }
-
-    // Update all matches for this listing to PENDING
+    // Reset all matches for this listing to PENDING
     await prisma.match.updateMany({
-      where: { listingId },
-      data: { result: "PENDING" },
+      where: {
+        listingId: listingId
+      },
+      data: {
+        status: "PENDING",
+        team1Score: null,
+        team2Score: null
+      }
     });
 
-    return NextResponse.json({ message: "All matches reset successfully" });
+    return NextResponse.json({ message: "Matches reset successfully" });
   } catch (error) {
-    console.error("Error resetting matches:", error);
-    return new NextResponse("Internal Server Error", { status: 500 });
+    console.error("[MATCH_RESET]", error);
+    return new NextResponse("Internal Error", { status: 500 });
   }
 } 

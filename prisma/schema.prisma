@@ -38,6 +38,7 @@ model User {
   accounts       Account[]
   listings       Listing[]
   reservations   Reservation[]
+  paymentConfirmations PaymentConfirmation[]
 }
 
 
@@ -84,6 +85,7 @@ model Listing {
 
   user           User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   reservations   Reservation[]
+  paymentConfirmations PaymentConfirmation[]
 
   matches Match[] //for matches
 }
@@ -109,6 +111,7 @@ model Reservation {
 
   user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   listing         Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  paymentConfirmation PaymentConfirmation?
 }
 
 model Match {
@@ -122,4 +125,23 @@ model Match {
   updatedAt DateTime @updatedAt
 
   listing   Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+}
+
+model PaymentConfirmation {
+    id              String   @id @default(cuid()) @map("_id")
+    userId          String
+    listingId       String
+    reservationId   String   @unique
+    paymentMethod   String
+    referenceNumber String
+    screenshotUrl   String
+    status          String   @default("PENDING")
+    createdAt       DateTime @default(now())
+    updatedAt       DateTime @updatedAt
+
+    user        User        @relation(fields: [userId], references: [id])
+    listing     Listing     @relation(fields: [listingId], references: [id])
+    reservation Reservation @relation(fields: [reservationId], references: [id])
+
+    @@index([userId])
 }

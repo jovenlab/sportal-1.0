@@ -1,7 +1,15 @@
 'use client';
-import React, { useState } from 'react';
-import { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
+
+interface Match {
+    id: string;
+    team1: string;
+    team2: string;
+    status: string;
+    team1Score: number | null;
+    team2Score: number | null;
+}
 
 type MatchResult = string | 'DRAW' | null;
 
@@ -26,33 +34,28 @@ const RoundRobin: React.FC<RoundRobinProps> = ({teamNames, listingId, currentUse
   const [modal, setModal] = useState<{ teamA: string, teamB: string, key: string, revKey: string } | null>(null);
   const [resetModal, setResetModal] = useState(false);
   const isOwner = currentUserId === listingOwnerId;
-  useEffect(() => {
-    const fetchMatches = async () => {
-      try {
-        const res = await fetch(`/api/match?listingId=${listingId}`);
-        if (!res.ok) {
-          console.error("❌ Failed to fetch matches");
-          return;
-        }
-  
-        const data = await res.json();
-        const fetchedResults: ResultsMap = {};
-        const teamSet = new Set<string>();
-  
-        data.forEach((match: any) => {
-          const key = `${match.teamA}_vs_${match.teamB}`;
-          fetchedResults[key] = match.result;
-          teamSet.add(match.teamA);
-          teamSet.add(match.teamB);
-        });
-  
-        setResults(fetchedResults);
-        setTeams(Array.from(teamSet));
-      } catch (err) {
-        console.error("❌ Error loading matches:", err);
+  const [matches, setMatches] = useState<Match[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isResetLoading, setIsResetLoading] = useState(false);
+
+  const fetchMatches = async () => {
+    try {
+      setIsLoading(true);
+      const response = await fetch(`/api/match?listingId=${listingId}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch matches');
       }
-    };
-  
+      const data = await response.json();
+      setMatches(data);
+    } catch (error) {
+      console.error('Error fetching matches:', error);
+      toast.error('Failed to load matches');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchMatches();
   }, [listingId]);
 
@@ -291,6 +294,36 @@ const RoundRobin: React.FC<RoundRobinProps> = ({teamNames, listingId, currentUse
     );
   };
 
+  const handleResetMatches = async () => {
+    if (!window.confirm('Are you sure you want to reset all match results? This action cannot be undone.')) {
+      return;
+    }
+
+    try {
+      setIsResetLoading(true);
+      const response = await fetch('/api/match/reset', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ listingId }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to reset matches');
+      }
+
+      // Refresh matches after reset
+      await fetchMatches();
+      toast.success('All matches have been reset');
+    } catch (error) {
+      console.error('Error resetting matches:', error);
+      toast.error('Failed to reset matches');
+    } finally {
+      setIsResetLoading(false);
+    }
+  };
+
   return (
     <div className=" w-full mx-auto font-sans text-black space-y-8">
       {!tournamentHasStarted && isOwner && (
@@ -359,42 +392,11 @@ const RoundRobin: React.FC<RoundRobinProps> = ({teamNames, listingId, currentUse
             <p className="mb-4">Are you sure you want to reset all match results?</p>
             <div className="flex justify-end gap-4">
               <button
-                onClick={async () => {
-                  try {
-                    // Reset all matches to PENDING in local state
-                    teams.forEach((teamA) => {
-                      teams.forEach((teamB) => {
-                        if (teamA !== teamB) {
-                          const key = `${teamA}_vs_${teamB}`;
-                          const revKey = `${teamB}_vs_${teamA}`;
-                          if (results[key] || results[revKey]) {
-                            setResults(prev => ({
-                              ...prev,
-                              [key]: "PENDING",
-                              [revKey]: "PENDING"
-                            }));
-                          }
-                        }
-                      });
-                    });
-
-                    // Update all matches in the database
-                    await fetch("/api/match/reset", {
-                      method: "POST",
-                      headers: { "Content-Type": "application/json" },
-                      body: JSON.stringify({ listingId }),
-                    });
-
-                    setResetModal(false);
-                    toast.success('All matches have been reset!');
-                  } catch (error) {
-                    console.error("Failed to reset matches:", error);
-                    toast.error('Failed to reset matches');
-                  }
-                }}
+                onClick={handleResetMatches}
+                disabled={isResetLoading}
                 className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
               >
-                Reset All
+                {isResetLoading ? 'Resetting...' : 'Reset All'}
               </button>
               <button
                 onClick={() => setResetModal(false)}

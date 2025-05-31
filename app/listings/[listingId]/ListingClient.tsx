@@ -202,6 +202,7 @@ const ListingClient: React.FC<ListingClientProps> = ({
                                     disabled={isLoading}
                                     disabledDates={disabledDates}
                                     category={listing.category}
+                                    listingId={listing.id}
                                 />
                             </div>
                         </>
