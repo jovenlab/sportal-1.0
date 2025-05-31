@@ -51,7 +51,7 @@ export async function POST(request: Request) {
           startDate,
           endDate,
           totalPrice,
-          teamName: isBasketball ? teamName : "",
+          teamName: isBasketball ? teamName : (teamName || fullName || ""),
           teamRepName: isBasketball ? teamRepName : "",
           teamRepRole: isBasketball ? teamRepRole : "",
           contactNumber: contactNumber,

@@ -139,54 +139,73 @@ const ListingClient: React.FC<ListingClientProps> = ({
                     md:gap-10
                     mt-6
                 '>
-                    <ListingInfo
-                        user={listing.user}
-                        category={category}
-                        description={listing.description}
-                        localAddress={listing.localAddress}
-                        guestCount={listing.guestCount}
-                        tournamentType={listing.tournamentType}
-                        locationValue={listing.locationValue}
-                        tournamentDate={listing.tournamentDate}
-                        
-                        />
-                    <div className='
-                        order-first
-                        mb-10
-                        md:order-last
-                        md:col-span-3
-                        '>
-                        {currentUser?.id === listing.user.id && !tournamentStarted && (
-                        <div className="mb-4">
-                            <button
-                            onClick={() => router.push(`/tournaments/${listing.id}`)}
-                            className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded shadow"
-                            >
-                            Begin Tournament
-                            </button>
-                        </div>
-                        )}
-                        {!tournamentStarted ? (
-                            <ListingReservation
-                            price={listing.price}
-                            totalPrice={totalPrice}
-                            onChangeDate={(value) => setDateRange(value)}
-                            dateRange={dateRange}
-                            onSubmit={onCreateReservation}
-                            disabled={isLoading}
-                            disabledDates={disabledDates}
-                            category={listing.category}
-                            />
-                        ) : (
-                            <RoundRobin
-                            teamNames={reservations.map(r => r.teamName).filter(Boolean)}
-                            listingId={listing.id}
-                            currentUserId={currentUser?.id}
-                            listingOwnerId={listing.user.id}
-                            tournamentDate={listing.tournamentDate}
-                            />
-                        )}
-                        </div>
+                    {tournamentStarted ? (
+                        <>
+                            <div className="md:col-span-7">
+                                <ListingInfo
+                                    user={listing.user}
+                                    category={category}
+                                    description={listing.description}
+                                    localAddress={listing.localAddress}
+                                    guestCount={listing.guestCount}
+                                    tournamentType={listing.tournamentType}
+                                    locationValue={listing.locationValue}
+                                    tournamentDate={listing.tournamentDate}
+                                />
+                            </div>
+                            <div className="md:col-span-7">
+                                <RoundRobin
+                                    teamNames={reservations.map(r => r.teamName).filter(Boolean)}
+                                    listingId={listing.id}
+                                    currentUserId={currentUser?.id}
+                                    listingOwnerId={listing.user.id}
+                                    tournamentDate={listing.tournamentDate.toISOString()}
+                                />
+                            </div>
+                        </>
+                    ) : (
+                        <>
+                            <div className="md:col-span-4">
+                                <ListingInfo
+                                    user={listing.user}
+                                    category={category}
+                                    description={listing.description}
+                                    localAddress={listing.localAddress}
+                                    guestCount={listing.guestCount}
+                                    tournamentType={listing.tournamentType}
+                                    locationValue={listing.locationValue}
+                                    tournamentDate={listing.tournamentDate}
+                                />
+                            </div>
+                            <div className='
+                                order-first
+                                mb-10
+                                md:order-last
+                                md:col-span-3
+                            '>
+                                {currentUser?.id === listing.user.id && !tournamentStarted && (
+                                    <div className="mb-4">
+                                        <button
+                                            onClick={() => router.push(`/tournaments/${listing.id}`)}
+                                            className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded shadow"
+                                        >
+                                            Begin Tournament
+                                        </button>
+                                    </div>
+                                )}
+                                <ListingReservation
+                                    price={listing.price}
+                                    totalPrice={totalPrice}
+                                    onChangeDate={(value) => setDateRange(value)}
+                                    dateRange={dateRange}
+                                    onSubmit={onCreateReservation}
+                                    disabled={isLoading}
+                                    disabledDates={disabledDates}
+                                    category={listing.category}
+                                />
+                            </div>
+                        </>
+                    )}
                 </div>
             </div>
         </div>

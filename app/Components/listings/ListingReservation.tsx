@@ -109,7 +109,7 @@ const ListingReservation: React.FC<ListingReservationProps> = ({
       {category !== "Basketball" && (
         <div className="p-4 space-y-4">
           <Input
-            id="fullName"
+            id="teamName"
             label="Full Name"
             register={register}
             errors={errors}
