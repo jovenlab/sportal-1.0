@@ -4,14 +4,15 @@ import toast from 'react-hot-toast';
 
 interface Match {
     id: string;
-    team1: string;
-    team2: string;
-    status: string;
-    team1Score: number | null;
-    team2Score: number | null;
+    teamA: string;
+    teamB: string;
+    result: string;
+    listingId: string;
+    createdAt: string;
+    updatedAt: string;
 }
 
-type MatchResult = string | 'DRAW' | null;
+type MatchResult = string | 'DRAW' | null | 'ONGOING' | 'PENDING';
 
 interface ResultsMap {
   [key: string]: MatchResult;
@@ -45,8 +46,27 @@ const RoundRobin: React.FC<RoundRobinProps> = ({teamNames, listingId, currentUse
       if (!response.ok) {
         throw new Error('Failed to fetch matches');
       }
-      const data = await response.json();
+      const data: Match[] = await response.json();
       setMatches(data);
+
+      // Process fetched data to populate teams and results
+      const uniqueTeams = new Set<string>();
+      const initialResults: ResultsMap = {};
+
+      data.forEach(match => {
+        uniqueTeams.add(match.teamA);
+        uniqueTeams.add(match.teamB);
+        
+        // Use the result field directly from the backend
+        const sortedKey = [match.teamA, match.teamB].sort().join('_vs_');
+        initialResults[sortedKey] = match.result as MatchResult; 
+      });
+
+      // Convert Set to Array and sort teams alphabetically for consistent display
+      const sortedTeams = Array.from(uniqueTeams).sort();
+      setTeams(sortedTeams);
+      setResults(initialResults);
+
     } catch (error) {
       console.error('Error fetching matches:', error);
       toast.error('Failed to load matches');
@@ -62,6 +82,34 @@ const RoundRobin: React.FC<RoundRobinProps> = ({teamNames, listingId, currentUse
   const generateTables = async () => {
     console.log("✅ Button clicked! Listing ID:", listingId);
     try {
+      // Check if matches already exist and delete them if they do
+      if (matches.length > 0) {
+        const confirmDelete = window.confirm(
+          "Matches already exist for this tournament. Do you want to delete them and generate new ones?"
+        );
+        if (!confirmDelete) {
+          return; // User cancelled deletion
+        }
+
+        console.log("🗑️ Deleting existing matches for listing:", listingId);
+        const deleteResponse = await fetch("/api/match/delete", {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ listingId }),
+        });
+
+        if (!deleteResponse.ok) {
+          const errorText = await deleteResponse.text();
+          console.error("❌ Failed to delete existing matches:", errorText);
+          toast.error("Failed to delete existing matches. Cannot regenerate.");
+          return;
+        }
+        console.log("🗑️ Existing matches deleted successfully.");
+      }
+
+      // Proceed with generating new matches
       const response = await fetch("/api/match/generate", {
         method: "POST",
         headers: {
@@ -74,26 +122,18 @@ const RoundRobin: React.FC<RoundRobinProps> = ({teamNames, listingId, currentUse
   
       if (!response.ok) {
         const errorText = await response.text();
-        // console.error("❌ Failed to generate matches:", errorText);
         toast.error("Failed to Generate Matches: Not Enough Teams");
         return;
       }      
   
-      const initialResults: ResultsMap = {};
-      console.log("🏁 Team names received:", teamNames);
-      teamNames.forEach(team => {
-        teamNames.forEach(opponent => {
-          if (team !== opponent) {
-            const key = `${team}_vs_${opponent}`;
-            initialResults[key] = null;
-          }
-        });
-      });
-  
-      setTeams(teamNames);
-      setResults(initialResults);
+      // After successful generation, refetch matches to update the UI
+      await fetchMatches();
+
+      toast.success("Matches generated successfully!");
+
     } catch (error) {
       console.error("Error generating matches", error);
+      toast.error("An error occurred while generating matches.");
     }
   };
 
