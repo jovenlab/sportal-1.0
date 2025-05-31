@@ -24,6 +24,7 @@ const RoundRobin: React.FC<RoundRobinProps> = ({teamNames, listingId, currentUse
   const [teams, setTeams] = useState<string[]>([]);
   const [results, setResults] = useState<ResultsMap>({});
   const [modal, setModal] = useState<{ teamA: string, teamB: string, key: string, revKey: string } | null>(null);
+  const [resetModal, setResetModal] = useState(false);
   const isOwner = currentUserId === listingOwnerId;
   useEffect(() => {
     const fetchMatches = async () => {
@@ -201,22 +202,35 @@ const RoundRobin: React.FC<RoundRobinProps> = ({teamNames, listingId, currentUse
     const winColor = "bg-green-100";
     const drawColor = "bg-yellow-100";
     const lossColor = "bg-red-100";
+    const ongoingColor = "bg-blue-100";
 
     return (
       <div>
-        <h2 className="text-lg font-medium text-sky-500 mb-2 mt-5 border-b border-gray-300 pb-2">Match Results Grid</h2>
+        <div className="flex justify-between items-center mb-2 mt-5">
+          <h2 className="text-lg font-medium text-sky-500 border-b border-gray-300 pb-2">Match Results Grid</h2>
+          {isOwner && (
+            <button
+              onClick={() => {
+                setResetModal(true);
+              }}
+              className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+            >
+              Reset All Matches
+            </button>
+          )}
+        </div>
         <table className="table-auto w-full border border-gray-200 rounded-xl shadow-sm overflow-hidden text-sm text-gray-700 bg-white">
-        <thead className="bg-gray-100">
+          <thead className="bg-gray-100">
             <tr>
               <th className="relative border px-3 py-6 text-center bg-gray-100">
                 <div className="absolute inset-0 flex items-center justify-center text-xs font-semibold pointer-events-none">
-                 <svg className="absolute w-full h-full text-gray-300" viewBox="0 0 100 100" preserveAspectRatio="none">
-                  <line x1="0" y1="0" x2="100" y2="100" stroke="currentColor" strokeWidth="2" />
-                 </svg>
-                   <span className="absolute bottom-1 left-1/3 transform -translate-x-1/2 text-[15px] text-gray-500">Team</span>
+                  <svg className="absolute w-full h-full text-gray-300" viewBox="0 0 100 100" preserveAspectRatio="none">
+                    <line x1="0" y1="0" x2="100" y2="100" stroke="currentColor" strokeWidth="2" />
+                  </svg>
+                  <span className="absolute bottom-1 left-1/3 transform -translate-x-1/2 text-[15px] text-gray-500">Team</span>
                   <span className="absolute top-1 right-1 text-[15px] text-gray-500">Opponent</span>
-               </div>
-             </th>
+                </div>
+              </th>
               {teams.map((team, i) => (
                 <th key={i} className="border px-3 py-1 text-center whitespace-nowrap">{team}</th>
               ))}
@@ -239,6 +253,9 @@ const RoundRobin: React.FC<RoundRobinProps> = ({teamNames, listingId, currentUse
                   } else if (val === 'DRAW') {
                     text = 'D';
                     color = drawColor;
+                  } else if (val === 'ONGOING') {
+                    text = 'Ongoing Match';
+                    color = ongoingColor;
                   } else if (val === rowTeam) {
                     text = 'W';
                     color = winColor;
@@ -276,34 +293,115 @@ const RoundRobin: React.FC<RoundRobinProps> = ({teamNames, listingId, currentUse
 
   return (
     <div className=" w-full mx-auto font-sans text-black space-y-8">
-      
-      {isOwner && !tournamentHasStarted && (
-        <div className="flex justify-center">
-          <button 
-            onClick={generateTables}
-            className="bg-sky-500 hover:bg-neutral-300 text-white font-medium mt-8 py-2 px-4 rounded-lg shadow-sm transition duration-150"
-          >
-            Generate Round Robin Bracket
-          </button>
-        </div>
+      {!tournamentHasStarted && isOwner && (
+        <button
+          onClick={generateTables}
+          className="px-4 py-2 bg-sky-500 text-white rounded-lg hover:bg-sky-600 transition-colors"
+        >
+          Generate Matches
+        </button>
       )}
-      
-      {teams.length > 0 && (
-        <div id="bracket">
-          <h1 className="text-2xl font-semibold text-gray-900 mt-10">{title}</h1>
-          {renderLeaderboard()}
-          {renderMatchGrid()}
+
+      {renderMatchGrid()}
+      {renderLeaderboard()}
+
+      {modal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-xl max-w-md w-full">
+            <h3 className="text-lg font-semibold mb-4">Update Match Result</h3>
+            <p className="mb-4">{modal.teamA} vs {modal.teamB}</p>
+            <div className="grid grid-cols-2 gap-4">
+              <button
+                onClick={() => updateResult(modal.teamA, modal.key, modal.revKey)}
+                className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+              >
+                {modal.teamA} Wins
+              </button>
+              <button
+                onClick={() => updateResult(modal.teamB, modal.key, modal.revKey)}
+                className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+              >
+                {modal.teamB} Wins
+              </button>
+              <button
+                onClick={() => updateResult('DRAW', modal.key, modal.revKey)}
+                className="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600"
+              >
+                Draw
+              </button>
+              <button
+                onClick={() => updateResult('ONGOING', modal.key, modal.revKey)}
+                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+              >
+                Ongoing
+              </button>
+              <button
+                onClick={() => updateResult('PENDING', modal.key, modal.revKey)}
+                className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
+              >
+                Reset
+              </button>
+              <button
+                onClick={() => setModal(null)}
+                className="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
         </div>
       )}
 
-      {modal && (
-        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-xl w-80 text-center shadow-lg space-y-4">
-            <p className="font-medium text-gray-800">Who won: {modal.teamA} or {modal.teamB}?</p>
-            <div className="space-y-2">
-              <button onClick={() => updateResult(modal.teamA, modal.key, modal.revKey)} className="bg-blue-600 hover:bg-blue-700 text-white w-full py-2 rounded-lg font-semibold"> {modal.teamA} </button>
-              <button onClick={() => updateResult(modal.teamB, modal.key, modal.revKey)} className="bg-blue-600 hover:bg-blue-700 text-white w-full py-2 rounded-lg font-semibold"> {modal.teamB} </button>
-              <button onClick={() => updateResult('DRAW', modal.key, modal.revKey)} className="bg-gray-500 hover:bg-gray-600 text-white w-full py-2 rounded-lg font-semibold"> Draw </button>
+      {resetModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-xl max-w-md w-full">
+            <h3 className="text-lg font-semibold mb-4">Reset All Matches</h3>
+            <p className="mb-4">Are you sure you want to reset all match results?</p>
+            <div className="flex justify-end gap-4">
+              <button
+                onClick={async () => {
+                  try {
+                    // Reset all matches to PENDING in local state
+                    teams.forEach((teamA) => {
+                      teams.forEach((teamB) => {
+                        if (teamA !== teamB) {
+                          const key = `${teamA}_vs_${teamB}`;
+                          const revKey = `${teamB}_vs_${teamA}`;
+                          if (results[key] || results[revKey]) {
+                            setResults(prev => ({
+                              ...prev,
+                              [key]: "PENDING",
+                              [revKey]: "PENDING"
+                            }));
+                          }
+                        }
+                      });
+                    });
+
+                    // Update all matches in the database
+                    await fetch("/api/match/reset", {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({ listingId }),
+                    });
+
+                    setResetModal(false);
+                    toast.success('All matches have been reset!');
+                  } catch (error) {
+                    console.error("Failed to reset matches:", error);
+                    toast.error('Failed to reset matches');
+                  }
+                }}
+                className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+              >
+                Reset All
+              </button>
+              <button
+                onClick={() => setResetModal(false)}
+                className="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300"
+              >
+                Cancel
+              </button>
             </div>
           </div>
         </div>

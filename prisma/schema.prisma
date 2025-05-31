@@ -115,7 +115,7 @@ model Match {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
   teamA     String
   teamB     String
-  result    String   // e.g., "DRAW", "teamA", "teamB"
+  result    String   // e.g., "DRAW", "teamA", "teamB", "PENDING", "ONGOING"
   listingId String   @db.ObjectId
 
   createdAt DateTime @default(now())
