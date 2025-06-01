@@ -24,9 +24,10 @@ interface RoundRobinProps {
     currentUserId?: string | null;
     listingOwnerId: string;
     tournamentDate: string;
+    tournamentType: string;
 }
 
-const RoundRobin: React.FC<RoundRobinProps> = ({teamNames, listingId, currentUserId, listingOwnerId, tournamentDate}) => {
+const RoundRobin: React.FC<RoundRobinProps> = ({teamNames, listingId, currentUserId, listingOwnerId, tournamentDate, tournamentType}) => {
   const [title, setTitle] = useState('');
   const tournamentHasStarted = new Date(tournamentDate) <= new Date();
   const [teamsInput, setTeamsInput] = useState('');

@@ -4,15 +4,35 @@ import prisma from "@/app/libs/prismadb";
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { listingId } = body;
+    const { listingId, tournamentType, teamA, teamB, round } = body;
 
     if (!listingId) {
       console.error("🚫 listingId missing in request body");
       return new NextResponse("Missing listingId", { status: 400 });
     }
 
-    console.log("✅ Received listingId:", listingId);
+    console.log("✅ Received request:", { listingId, tournamentType, teamA, teamB, round });
 
+    if (tournamentType === 'SINGLE_ELIMINATION') {
+      // For single elimination, create a single match with the specified teams
+      if (!teamA || !teamB) {
+        return new NextResponse("Missing team information", { status: 400 });
+      }
+
+      const match = await prisma.match.create({
+        data: {
+          teamA,
+          teamB,
+          result: "PENDING",
+          listingId,
+          round: round || 1, // Default to round 1 if not specified
+        },
+      });
+
+      return NextResponse.json(match);
+    }
+
+    // Round robin tournament logic
     const existingMatch = await prisma.match.findFirst({
       where: { listingId },
     });
@@ -43,6 +63,7 @@ export async function POST(req: Request) {
               teamB: teams[j]!,
               result: "PENDING",
               listingId,
+              round: 1, // All round robin matches are in round 1
             },
           })
         );
