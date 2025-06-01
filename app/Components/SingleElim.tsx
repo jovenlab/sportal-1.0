@@ -113,23 +113,6 @@ export default function SingleElim({ teams, listingId }: Props) {
     loadMatches();
   }, [listingId, brackets.length > 0]); // Only run when brackets are generated
 
-  // Add useEffect to load winner
-  useEffect(() => {
-    const loadWinner = async () => {
-      try {
-        const response = await fetch(`/api/listings/${listingId}`);
-        const data = await response.json();
-        if (data.winner) {
-          setWinner(data.winner);
-        }
-      } catch (error) {
-        console.error("Error loading winner:", error);
-      }
-    };
-
-    loadWinner();
-  }, [listingId]);
-
   const getClosestBracketSize = (base: number) => {
     return knownBrackets.find((k) => k >= base) || base;
   };
@@ -229,61 +212,49 @@ export default function SingleElim({ teams, listingId }: Props) {
   };
 
   const finalizeBracket = (finalTeams: string[]) => {
-    const rounds = Math.log2(finalTeams.length);
+    const rounds = Math.ceil(Math.log2(finalTeams.length));
     const struct: Game[] = [];
     let gameId = 1;
 
-    // Split teams into two brackets
-    const bracketSize = finalTeams.length / 2;
-    const bracketA = finalTeams.slice(0, bracketSize);
-    const bracketB = finalTeams.slice(bracketSize);
-
-    // Create first round games for bracket A
-    for (let i = 0; i < bracketA.length; i += 2) {
-      struct.push({
-        round: 1,
-        game: i / 2,
-        id: gameId++,
-        teams: [bracketA[i] || "BYE", bracketA[i + 1] || "BYE"],
-        nextGameId: null as number | null,
-        locked: false,
-      });
+    // Create all games for each round
+    for (let round = 1; round <= rounds; round++) {
+      const gamesInRound = Math.pow(2, rounds - round);
+      for (let game = 0; game < gamesInRound; game++) {
+        struct.push({
+          round,
+          game,
+          id: gameId++,
+          teams: [null, null],
+          nextGameId: null,
+          locked: false,
+        });
+      }
     }
-
-    // Create first round games for bracket B
-    for (let i = 0; i < bracketB.length; i += 2) {
-      struct.push({
-        round: 1,
-        game: (bracketA.length + i) / 2,
-        id: gameId++,
-        teams: [bracketB[i] || "BYE", bracketB[i + 1] || "BYE"],
-        nextGameId: null as number | null,
-        locked: false,
-      });
-    }
-
-    // Create final game
-    const final: Game = {
-      round: 2,
-      game: 0,
-      id: gameId++,
-      teams: [null, null],
-      nextGameId: null,
-      locked: false,
-    };
-
-    struct.push(final);
 
     // Set up nextGameId connections
-    // Connect first round games to the final
-    const firstRoundGames = struct.filter(g => g.round === 1);
-    const bracketAGames = firstRoundGames.slice(0, bracketA.length / 2);
-    const bracketBGames = firstRoundGames.slice(bracketA.length / 2);
+    for (let round = 1; round < rounds; round++) {
+      const currentRoundGames = struct.filter(g => g.round === round);
+      const nextRoundGames = struct.filter(g => g.round === round + 1);
+      
+      for (let i = 0; i < currentRoundGames.length; i += 2) {
+        const game1 = currentRoundGames[i];
+        const game2 = currentRoundGames[i + 1];
+        const nextGame = nextRoundGames[Math.floor(i / 2)];
+        
+        if (game1 && nextGame) game1.nextGameId = nextGame.id;
+        if (game2 && nextGame) game2.nextGameId = nextGame.id;
+      }
+    }
 
-    // Connect first game of bracket A to first slot of final
-    bracketAGames[0].nextGameId = final.id;
-    // Connect first game of bracket B to second slot of final
-    bracketBGames[0].nextGameId = final.id;
+    // Assign teams to first round games
+    const firstRoundGames = struct.filter(g => g.round === 1);
+    for (let i = 0; i < firstRoundGames.length; i++) {
+      const game = firstRoundGames[i];
+      game.teams = [
+        finalTeams[i * 2] || "BYE",
+        finalTeams[i * 2 + 1] || "BYE"
+      ];
+    }
 
     setBrackets(struct);
     setBracketCount((b) => b + 1);
@@ -691,7 +662,8 @@ export default function SingleElim({ teams, listingId }: Props) {
                                 teamB: newNextTeams[1],
                                 result: "PENDING",
                                 listingId: listingId,
-                                matchId: nextGame.matchId
+                                matchId: nextGame.matchId,
+                                round: nextGame.round
                             }),
                         });
 
@@ -727,58 +699,18 @@ export default function SingleElim({ teams, listingId }: Props) {
         };
 
         // Start propagation from the current game
-        propagateChanges(updatedBrackets, gameId, result).then(async finalBrackets => {
+        propagateChanges(updatedBrackets, gameId, result).then(finalBrackets => {
             setBrackets(finalBrackets);
-
-            // If this is the final round, update the tournament winner
-            if (!game.nextGameId) {
-                if (result !== 'PENDING' && result !== 'ONGOING' && result !== 'DRAW' && (result === game.teams[0] || result === game.teams[1])) {
-                    const newWinner = result as string;
-                    setWinner(newWinner);
-                    
-                    // Update winner in database
-                    try {
-                        const winnerResponse = await fetch(`/api/listings/${listingId}/winner`, {
-                            method: "PUT",
-                            headers: {
-                                "Content-Type": "application/json",
-                            },
-                            body: JSON.stringify({
-                                winner: newWinner
-                            }),
-                        });
-
-                        if (!winnerResponse.ok) {
-                            throw new Error("Failed to update tournament winner");
-                        }
-                    } catch (error) {
-                        console.error("Error updating tournament winner:", error);
-                        toast.error("Failed to update tournament winner");
-                    }
-                } else {
-                    setWinner("");
-                    // Clear winner in database
-                    try {
-                        const winnerResponse = await fetch(`/api/listings/${listingId}/winner`, {
-                            method: "PUT",
-                            headers: {
-                                "Content-Type": "application/json",
-                            },
-                            body: JSON.stringify({
-                                winner: ""
-                            }),
-                        });
-
-                        if (!winnerResponse.ok) {
-                            throw new Error("Failed to clear tournament winner");
-                        }
-                    } catch (error) {
-                        console.error("Error clearing tournament winner:", error);
-                        toast.error("Failed to clear tournament winner");
-                    }
-                }
-            }
         });
+
+        // If this is the final round, update the tournament winner
+        if (!game.nextGameId) {
+            if (result !== 'PENDING' && result !== 'ONGOING' && result !== 'DRAW' && (result === game.teams[0] || result === game.teams[1])) {
+                 setWinner(result as string);
+            } else {
+                 setWinner("");
+            }
+        }
 
         return updatedBrackets;
       });
