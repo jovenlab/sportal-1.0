@@ -120,6 +120,7 @@ model Match {
   teamB     String
   result    String   // e.g., "DRAW", "teamA", "teamB", "PENDING", "ONGOING"
   listingId String   @db.ObjectId
+  round     Int      @default(1)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

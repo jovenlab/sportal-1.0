@@ -7,6 +7,7 @@ import Container from "@/app/Components/Container";
 import ListingHead from "@/app/Components/listings/ListingHead";
 import ListingInfo from "@/app/Components/listings/ListingInfo";
 import RoundRobin from "@/app/Components/RoundRobin"; // Adjust path as needed
+import SingleElim from "@/app/Components/SingleElim"; // Import SingleElim
 import { categories } from "@/app/Components/Navbar/Categories";
 import { formatISO } from "date-fns";
 import { DatePicker } from "antd";
@@ -147,13 +148,23 @@ const TournamentDetails: React.FC<TournamentDetailsProps> = ({
             </table>
           </div>
           <div className="mt-10">
-            <RoundRobin
-              teamNames={teamNames}
-              listingId={listing.id}
-              currentUserId={currentUser?.id}
-              listingOwnerId={listing.user.id}
-              tournamentDate={listing.tournamentDate}
-            />
+            {listing.tournamentType === 'ROUND_ROBIN' && (
+              <RoundRobin
+                teamNames={teamNames}
+                listingId={listing.id}
+                currentUserId={currentUser?.id}
+                listingOwnerId={listing.user.id}
+                tournamentDate={listing.tournamentDate.toISOString()}
+                tournamentType={listing.tournamentType}
+              />
+            )}
+            {listing.tournamentType === 'SINGLE_ELIMINATION' && (
+              <SingleElim 
+                teams={teamNames}
+                listingId={listing.id}
+                // Add other props if SingleElim needs data from TournamentDetails
+              />
+            )}
           </div>
         </div>
       </div>

@@ -12,7 +12,7 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
-    const { teamA, teamB, result, listingId } = body;
+    const { teamA, teamB, result, listingId, matchId, round } = body;
 
     if (!teamA || !teamB || !result || !listingId) {
       return new NextResponse("Missing required fields", { status: 400 });
@@ -32,7 +32,31 @@ export async function POST(req: Request) {
       return new NextResponse("Forbidden: Not tournament owner", { status: 403 });
     }
 
-    // 🔄 Find existing match (in any order)
+    // If matchId is provided, update that specific match
+    if (matchId) {
+      const match = await prisma.match.findUnique({
+        where: { id: matchId }
+      });
+
+      if (!match) {
+        return new NextResponse("Match not found", { status: 404 });
+      }
+
+      const updatedMatch = await prisma.match.update({
+        where: { id: matchId },
+        data: {
+          teamA,
+          teamB,
+          result,
+          round: round || match.round,
+          updatedAt: new Date(),
+        },
+      });
+
+      return NextResponse.json(updatedMatch);
+    }
+
+    // Otherwise, find existing match by teams
     const existingMatch = await prisma.match.findFirst({
       where: {
         listingId,
@@ -44,7 +68,7 @@ export async function POST(req: Request) {
     });
 
     if (existingMatch) {
-      await prisma.match.update({
+      const updatedMatch = await prisma.match.update({
         where: { id: existingMatch.id },
         data: {
           result,
@@ -52,9 +76,8 @@ export async function POST(req: Request) {
         },
       });
 
-      return NextResponse.json({ message: "Match updated", matchId: existingMatch.id });
+      return NextResponse.json(updatedMatch);
     } else {
-      // Optionally prevent creating if match doesn't exist
       return new NextResponse("Match not found", { status: 404 });
     }
   } catch (error) {
