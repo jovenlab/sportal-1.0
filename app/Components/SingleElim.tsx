@@ -5,6 +5,8 @@ import toast from "react-hot-toast";
 interface Props {
     teams: string[];
     listingId: string;
+    currentUserId?: string | null;
+    listingOwnerId: string;
 }
 
 type Game = {
@@ -21,7 +23,7 @@ type MatchResult = string | 'DRAW' | null | 'ONGOING' | 'PENDING';
 
 const knownBrackets = [2, 4, 8, 16, 32];
 
-export default function SingleElim({ teams, listingId }: Props) {
+export default function SingleElim({ teams, listingId, currentUserId, listingOwnerId }: Props) {
   const router = useRouter();
   const [brackets, setBrackets] = useState<Game[]>([]);
   const [winner, setWinner] = useState("");
@@ -35,6 +37,8 @@ export default function SingleElim({ teams, listingId }: Props) {
   const [matches, setMatches] = useState<any[]>([]);
   const [modal, setModal] = useState<{ teamA: string, teamB: string, gameId: number } | null>(null);
   
+  const isOwner = currentUserId === listingOwnerId;
+
   useEffect(() => {
     if (teams && teams.length >= 2) {
       generateBracket(teams);
@@ -748,12 +752,14 @@ export default function SingleElim({ teams, listingId }: Props) {
             {isStartingTournament ? "Starting..." : "Start Tournament"}
           </button>
         ) : (
-          <button
-            onClick={resetBracket}
-            className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
-          >
-            Reset Tournament
-          </button>
+          isOwner && (
+            <button
+              onClick={resetBracket}
+              className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
+            >
+              Reset Tournament
+            </button>
+          )
         )}
       </div>
 
@@ -811,11 +817,12 @@ export default function SingleElim({ teams, listingId }: Props) {
                                   teams: game.teams,
                                   match
                                 });
-                                // Only show modal if both teams are present and not BYE
-                                if (game.matchId && 
+                                // Only show modal if both teams are present and not BYE, and user is the owner
+                                if (isOwner &&
+                                    game.matchId && 
                                     game.teams[0] !== "BYE" && 
-                                    game.teams[1] !== "BYE" && 
-                                    game.teams[0] !== null && 
+                                    game.teams[1] !== "BYE" &&
+                                    game.teams[0] !== null &&
                                     game.teams[1] !== null) {
                                   setModal({
                                     teamA: game.teams[0] || '',
@@ -824,17 +831,16 @@ export default function SingleElim({ teams, listingId }: Props) {
                                   });
                                 }
                               }}
-                              className={`p-2 rounded cursor-pointer transition-colors ${
-                                winners[game.id] === team
+                              className={`p-2 rounded cursor-pointer transition-colors ${winners[game.id] === team
                                   ? "bg-green-100 border border-green-500"
                                   : game.locked
                                   ? "bg-gray-100"
-                                  : game.matchId && 
-                                    game.teams[0] !== "BYE" && 
+                                  : game.matchId &&
+                                    game.teams[0] !== "BYE" &&
                                     game.teams[1] !== "BYE" &&
                                     game.teams[0] !== null &&
                                     game.teams[1] !== null
-                                  ? "bg-blue-50 hover:bg-blue-100"
+                                  ? `${isOwner ? 'bg-blue-50 hover:bg-blue-100' : 'bg-blue-50 opacity-60 cursor-not-allowed'}`
                                   : "bg-gray-50"
                               }`}
                             >
@@ -859,7 +865,7 @@ export default function SingleElim({ teams, listingId }: Props) {
         </div>
       )}
 
-      {modal && (
+      {isOwner && modal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-lg shadow-xl max-w-md w-full">
             <h3 className="text-lg font-semibold mb-4">Update Match Result</h3>

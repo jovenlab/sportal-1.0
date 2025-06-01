@@ -14,6 +14,8 @@ import toast from 'react-hot-toast';
 import ListingReservation from '@/app/Components/listings/ListingReservation';
 import {Range} from "react-date-range";
 import RoundRobin from '@/app/Components/RoundRobin';
+import TournamentDetails from '@/app/Components/TournamentDetails';
+import SingleElim from '@/app/Components/SingleElim';
 
 const initialDateRange = {
     startDate: new Date(),
@@ -154,13 +156,23 @@ const ListingClient: React.FC<ListingClientProps> = ({
                                 />
                             </div>
                             <div className="md:col-span-7">
-                                <RoundRobin
-                                    teamNames={reservations.map(r => r.teamName).filter(Boolean)}
-                                    listingId={listing.id}
-                                    currentUserId={currentUser?.id}
-                                    listingOwnerId={listing.user.id}
-                                    tournamentDate={listing.tournamentDate.toISOString()}
-                                />
+                                {listing.tournamentType === 'SINGLE_ELIMINATION' ? (
+                                    <SingleElim
+                                        teams={reservations.map(r => r.teamName).filter(Boolean)}
+                                        listingId={listing.id}
+                                        currentUserId={currentUser?.id}
+                                        listingOwnerId={listing.user.id}
+                                    />
+                                ) : listing.tournamentType === 'ROUND_ROBIN' ? (
+                                    <RoundRobin
+                                        teamNames={reservations.map(r => r.teamName).filter(Boolean)}
+                                        listingId={listing.id}
+                                        currentUserId={currentUser?.id}
+                                        listingOwnerId={listing.user.id}
+                                        tournamentDate={listing.tournamentDate.toISOString()}
+                                        tournamentType={listing.tournamentType}
+                                    />
+                                ) : null}
                             </div>
                         </>
                     ) : (
